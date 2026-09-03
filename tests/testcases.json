@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "description": "Looking for a Backend Developer with 1-3 years of experience with Django. Good to have knowledge of Postgres. Should be familiar with CI/CD. Should have good communication skills."
+  },
+  {
+    "id": 2,
+    "description": "Title: Backend Developer - min 2 years of experience\nLocation: Chennai/Bangalore\nRequirements:\nStrong knowledge of any backend framework like Django, FastAPI etc.\nUnderstanding of REST APIs and backend architecture\nProblem-solving mindset and clean coding practices\nMust be able to work in a fast-paced environment and learn new technologies quickly.\nGood to Have experience with AWS/Firebase/GCP"
+  },
+  {
+    "id": 3,
+    "description": "Strong knowledge of Django and Flask, Express frameworks. Good to have understanding of Microsoft Azure and cloud services."
+  },
+  {
+    "id": 4,
+    "description": "Strong knowledge of any programming language like python, java etc. 1 year of experience on Django + PostgreSQL or Flask + MongoDB"
+  }
+]

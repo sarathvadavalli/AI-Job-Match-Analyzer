@@ -1,0 +1,167 @@
+[
+  {
+    "id": 1,
+    "description": "Looking for a Backend Developer with 1-3 years of experience with Django. Good to have knowledge of Postgres. Should be familiar with CI/CD. Should have good communication skills.",
+    "status": "success",
+    "latency_seconds": 61.839,
+    "response": {
+      "job_title": {
+        "value": "Backend Developer",
+        "confidence": 1.0,
+        "source": "Backend Developer"
+      },
+      "experience_years": {
+        "min": {
+          "value": "1",
+          "confidence": 1.0,
+          "source": "1"
+        },
+        "max": {
+          "value": "3",
+          "confidence": 1.0,
+          "source": "3"
+        },
+        "confidence": 1.0,
+        "source": "1-3 years"
+      },
+      "required_skills": {
+        "value": [
+          "Django",
+          "CI/CD"
+        ],
+        "confidence": 1.0,
+        "source": "experience with Django. Good to have knowledge of Postgres. Should be familiar with CI/CD."
+      },
+      "preferred_skills": {
+        "value": [
+          "Postgres"
+        ],
+        "confidence": 1.0,
+        "source": "Good to have knowledge of Postgres."
+      },
+      "soft_skills": {
+        "value": [
+          "Communication"
+        ],
+        "confidence": 1.0,
+        "source": "Should have good communication skills."
+      },
+      "location": {
+        "value": null,
+        "confidence": 0.0,
+        "source": null
+      }
+    }
+  },
+  {
+    "id": 2,
+    "description": "Title: Backend Developer - min 2 years of experience\nLocation: Chennai/Bangalore\nRequirements:\nStrong knowledge of any backend framework like Django, FastAPI etc.\nUnderstanding of REST APIs and backend architecture\nProblem-solving mindset and clean coding practices\nMust be able to work in a fast-paced environment and learn new technologies quickly.\nGood to Have experience with AWS/Firebase/GCP",
+    "status": "success",
+    "latency_seconds": 63.545,
+    "response": {
+      "job_title": {
+        "value": "Backend Developer",
+        "confidence": 1.0,
+        "source": "Backend Developer"
+      },
+      "experience_years": {
+        "min": {
+          "value": "2",
+          "confidence": 1.0,
+          "source": "min 2 years"
+        },
+        "max": {
+          "value": null,
+          "confidence": 0.0,
+          "source": null
+        },
+        "confidence": 1.0,
+        "source": "min 2 years of experience"
+      },
+      "required_skills": {
+        "value": [
+          "Backend Frameworks",
+          "Django",
+          "FastAPI",
+          "REST APIs",
+          "Backend Architecture"
+        ],
+        "confidence": 1.0,
+        "source": "Strong knowledge of any backend framework like Django, FastAPI etc. Understanding of REST APIs and backend architecture"
+      },
+      "preferred_skills": {
+        "value": [
+          "AWS/Firebase/GCP"
+        ],
+        "confidence": 1.0,
+        "source": "Good to Have experience with AWS/Firebase/GCP"
+      },
+      "soft_skills": {
+        "value": [
+          "Problem Solving"
+        ],
+        "confidence": 1.0,
+        "source": "Problem-solving mindset"
+      },
+      "location": {
+        "value": "Chennai/Bangalore",
+        "confidence": 1.0,
+        "source": "Chennai/Bangalore"
+      }
+    }
+  },
+  {
+    "id": 3,
+    "description": "Strong knowledge of Django and Flask, Express frameworks. Good to have understanding of Microsoft Azure and cloud services.",
+    "status": "success",
+    "latency_seconds": 7.592,
+    "response": {
+      "job_title": {
+        "value": null,
+        "confidence": 0.0,
+        "source": null
+      },
+      "experience_years": {
+        "min": {
+          "value": null,
+          "confidence": 0.0,
+          "source": null
+        },
+        "max": {
+          "value": null,
+          "confidence": 0.0,
+          "source": null
+        },
+        "confidence": 0.0,
+        "source": null
+      },
+      "required_skills": {
+        "value": [
+          "Django",
+          "Flask",
+          "Express"
+        ],
+        "confidence": 1.0,
+        "source": "Strong knowledge of Django and Flask, Express frameworks."
+      },
+      "preferred_skills": {
+        "value": [
+          "Microsoft Azure",
+          "cloud services"
+        ],
+        "confidence": 1.0,
+        "source": "Good to have understanding of Microsoft Azure and cloud services."
+      },
+      "soft_skills": {
+        "value": [],
+        "confidence": 0.0,
+        "source": null
+      },
+      "location": {
+        "value": null,
+        "confidence": 0.0,
+        "source": null
+      }
+    }
+  }
+]

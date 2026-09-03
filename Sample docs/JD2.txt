@@ -1,0 +1,1 @@
+Looking for a Backend Developer with 1-2 years of experience with Django. Freshers with strong knowledge are also welcome. Good to have knowledge of Postgres. Should be familiar with CI/CD. Should have good communication skills.
