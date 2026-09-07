@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - JD Extractor</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #f8fafc;
+            color: #111827;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 20px clamp(20px, 6vw, 64px);
+            border-bottom: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
+        h1 {
+            font-size: clamp(24px, 4vw, 36px);
+            line-height: 1.15;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        a,
+        button {
+            min-height: 42px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #1f2937;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .primary {
+            border-color: #2563eb;
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        main {
+            width: min(100%, 1000px);
+            margin: 0 auto;
+            padding: 36px 20px;
+        }
+
+        .welcome {
+            margin-bottom: 28px;
+        }
+
+        .welcome p {
+            margin-top: 8px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .tool {
+            padding: 22px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        .tool h2 {
+            margin-bottom: 8px;
+            font-size: 20px;
+        }
+
+        .tool p {
+            margin-bottom: 18px;
+            color: #64748b;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 640px) {
+            header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Dashboard</h1>
+        <div class="actions">
+            <a href="http://127.0.0.1:8000/profile" class="primary">View Profile</a>
+            <button type="button" id="logoutButton">Logout</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="welcome">
+            <h2 id="welcomeTitle">Welcome back</h2>
+            <p>Choose an extractor to continue working with resumes and job descriptions.</p>
+        </section>
+
+        <section class="tools">
+            <article class="tool">
+                <h2>Job Description Extractor</h2>
+                <p>Upload a job description and extract the role, skills, experience, location, and requirements.</p>
+                <a href="/upload/jd">Open JD Extractor</a>
+            </article>
+
+            <article class="tool">
+                <h2>Resume Extractor</h2>
+                <p>Upload a resume and extract candidate profile details, education, work history, skills, and links.</p>
+                <a href="/upload/resume">Open Resume Extractor</a>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        const logoutButton = document.getElementById("logoutButton");
+
+        logoutButton.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const response = await fetch('http://127.0.0.1:8000/auth/logout',  {method: "POST"});
+            data = response.json();
+            console.log(data.message)
+            window.location.replace("/login");
+        });
+    </script>
+    
+</body>
+</html>

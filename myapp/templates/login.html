@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - JD Extractor</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            color: #111827;
+        }
+
+        .auth-panel {
+            width: min(92%, 420px);
+            padding: 32px;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 16px 35px rgba(15, 23, 42, 0.12);
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: 28px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            margin-bottom: 24px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 10px;
+            background: #f8fafc;
+            color: #334155;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .tab.active {
+            border-color: #2563eb;
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        input {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            min-height: 46px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 6px;
+            background: #0f766e;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .message {
+            display: none;
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .message.error {
+            display: block;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .message.success {
+            display: block;
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <main class="auth-panel">
+        <h1>JD Extractor</h1>
+        <p class="subtitle">Sign in to continue to your dashboard.</p>
+
+        <div class="tabs" role="tablist">
+            <button class="tab active" type="button" id="loginTab">Login</button>
+            <button class="tab" type="button" id="registerTab">Register</button>
+        </div>
+
+        <form id="authForm">
+            <div id="nameGroup" class="hidden">
+                <label for="name">Name</label>
+                <input id="name" name="name" autocomplete="name">
+            </div>
+
+            <label id="usernameLabel" for="username">Username or Email</label>
+            <input id="username" name="username" type="text" autocomplete="username" required>
+
+            <div id="emailGroup" class="hidden">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email">
+            </div>
+
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required minlength="6">
+
+            <button type="submit" id="submitButton">Login</button>
+        </form>
+
+        <div id="message" class="message"></div>
+    </main>
+
+    <script>
+        const authForm = document.getElementById("authForm");
+        const loginTab = document.getElementById("loginTab");
+        const registerTab = document.getElementById("registerTab");
+        const nameGroup = document.getElementById("nameGroup");
+        const nameInput = document.getElementById("name");
+        const usernameLabel = document.getElementById("usernameLabel");
+        const emailGroup = document.getElementById("emailGroup");
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        const submitButton = document.getElementById("submitButton");
+        const message = document.getElementById("message");
+        let mode = "login";
+
+        function setMode(nextMode) {
+            mode = nextMode;
+            const isRegister = mode === "register";
+            authForm.reset();
+
+            loginTab.classList.toggle("active", !isRegister);
+            registerTab.classList.toggle("active", isRegister);
+            nameGroup.classList.toggle("hidden", !isRegister);
+            nameInput.required = isRegister;
+            usernameLabel.textContent = isRegister ? "UserName" :  "Username or Email";
+            emailGroup.classList.toggle("hidden", !isRegister);
+            emailInput.required = isRegister;
+            passwordInput.autocomplete = isRegister ? "new-password" : "current-password";
+            submitButton.textContent = isRegister ? "Create Account" : "Login";
+            message.className = "message";
+            message.textContent = "";
+        }
+
+        loginTab.addEventListener("click", () => setMode("login"));
+        registerTab.addEventListener("click", () => setMode("register"));
+
+        authForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            submitButton.disabled = true;
+            message.className = "message";
+
+            const payload = {
+                password: authForm.password.value
+            };
+
+            if (mode === "register") {
+                payload.name = authForm.name.value;
+                payload.username = authForm.username.value;
+                payload.email = authForm.email.value;
+            }
+            else {
+                payload.identifier = authForm.username.value;
+            }
+
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/auth/${mode}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (mode === "register") {
+                    if (!response.ok) {
+                        throw new Error(data.detail || "Registration failed.");
+                    }
+
+                    message.textContent = data.message || "Account created successfully.";
+                    message.className = "message success";
+
+                    setTimeout(() => setMode("login"), 3000);
+                    return;
+                }
+
+                // Login
+                if (!response.ok) {
+                    throw new Error(data.detail || "Authentication failed.");
+                }
+
+                message.textContent = `${data.message}. Opening dashboard...`;
+                message.className = "message success";
+                window.location.replace("http://127.0.0.1:8000/dashboard")
+
+            } catch (error) {
+                message.textContent = error.message;
+                message.className = "message error";
+            } finally {
+                submitButton.disabled = false;
+            }
+
+        });
+    </script>
+</body>
+</html>

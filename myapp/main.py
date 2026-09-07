@@ -1,8 +1,12 @@
 from fastapi import FastAPI
-from myapp.routes import router as documents_router
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="FIRST PROJECT")
+from myapp.auth_routes import router as auth_router
+from myapp.core.db import close_db, init_db
+from myapp.page_routes import router as pages_router
+from myapp.routes import router as documents_router
+
+app = FastAPI(title="JD Extractor")
 
 app.add_middleware(
     CORSMiddleware,
@@ -12,4 +16,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(pages_router)
+app.include_router(auth_router)
 app.include_router(documents_router)
+
+
+@app.on_event("startup")
+def on_startup():
+    init_db()
+
+
+@app.on_event("shutdown")
+def on_shutdown():
+    close_db()

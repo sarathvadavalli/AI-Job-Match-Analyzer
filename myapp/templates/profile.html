@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - JD Extractor</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            color: #111827;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 20px clamp(20px, 6vw, 64px);
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        h1 {
+            font-size: clamp(24px, 4vw, 34px);
+        }
+
+        main {
+            width: min(92%, 560px);
+            margin: 36px auto;
+            padding: 28px;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 16px 35px rgba(15, 23, 42, 0.1);
+        }
+
+        dl {
+            display: grid;
+            gap: 16px;
+        }
+
+        dt {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        dd {
+            margin-top: 4px;
+            color: #111827;
+            font-size: 17px;
+            overflow-wrap: anywhere;
+        }
+
+        a {
+            min-height: 42px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid #2563eb;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Profile</h1>
+        <a href="/dashboard">Dashboard</a>
+    </header>
+
+    <main>
+        <dl>
+            <div>
+                <dt>Name</dt>
+                <dd id="profileName">{{ user.name }}</dd>
+            </div>
+
+            <div>
+                <dt>Email</dt>
+                <dd id="profileEmail">{{ user.email }}</dd>
+            </div>
+
+            <div>
+                <dt>Created</dt>
+                <dd id="profileCreated">{{ user.created_at }}</dd>
+            </div>
+
+            <div>
+                <dt>Last Login</dt>
+                <dd id="profileLastLogin">{{ user.last_login_at }}</dd>
+            </div>
+        </dl>
+    </main>
+
+</body>
+</html>
