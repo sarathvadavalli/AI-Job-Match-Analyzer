@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from myapp.auth_routes import router as auth_router
+from myapp.routes.auth_routes import router as auth_router
 from myapp.core.db import close_db, init_db
-from myapp.page_routes import router as pages_router
-from myapp.routes import router as documents_router
+from myapp.routes.page_routes import router as pages_router
+from myapp.routes.document_routes import router as documents_router
 
 app = FastAPI(title="JD Extractor")
 
