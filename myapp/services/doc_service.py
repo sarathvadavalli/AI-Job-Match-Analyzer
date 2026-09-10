@@ -2,7 +2,14 @@ from io import BytesIO
 import fitz
 from docx import Document
 from pathlib import Path
+import pytesseract
+from PIL import Image
+
 from myapp.schemas.resume_extraction import ResumeExtractionInput
+
+pytesseract.pytesseract.tesseract_cmd = (
+    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+)
 
 class DocumentService:
 
@@ -14,7 +21,12 @@ class DocumentService:
 
         if extension == "pdf":
             print("Extracting PDF content...")
-            return self._extract_pdf(content)
+            text = self._extract_pdf(content)
+
+            if not text:
+                text = self._extract_pdf_ocr(content)
+            
+            return ResumeExtractionInput(text=text, links=[])
 
         if extension == "docx":
             return self._extract_docx(content)
@@ -24,24 +36,45 @@ class DocumentService:
 
         raise ValueError("Unsupported file type")
 
-    def _extract_pdf(self, content: bytes) -> ResumeExtractionInput:
+    def _extract_pdf(self, content: bytes) -> str:
         text = []
-        links = []
 
         with fitz.open(stream=content, filetype="pdf") as document:
             for page in document:
-                text.append(page.get_text())
-                if self.file_type == "resume":
-                    links.extend(
-                        link["uri"]
-                        for link in page.get_links()
-                        if link.get("uri")
-                    )
+                page_text = page.get_text()
 
-        text = "\n".join(text).strip()
-        print(text)
-        print(links)
-        return ResumeExtractionInput(text=text, links=links)
+                links = "\n".join(
+                    link["uri"]
+                    for link in page.get_links()
+                    if "uri" in link
+                )
+
+                text.append(page_text + "\n" + links)
+
+        return "\n".join(text).strip()
+
+    def _extract_pdf_ocr(self, content: bytes) -> str:
+        text = []
+
+        with fitz.open(stream=content, filetype="pdf") as document:
+            for page in document:
+
+                # Render PDF page as an image
+                pixmap = page.get_pixmap(dpi=300)
+
+                # Convert pixmap to bytes
+                image_bytes = pixmap.tobytes("png")
+
+                # Convert bytes to PIL Image
+                image = Image.open(BytesIO(image_bytes))
+
+                # Run OCR
+                page_text = pytesseract.image_to_string(image)
+
+                if page_text.strip():
+                    text.append(page_text.strip())
+
+        return "\n".join(text).strip()
 
     def _extract_docx(self, content: bytes) -> ResumeExtractionInput:
         document = Document(BytesIO(content))

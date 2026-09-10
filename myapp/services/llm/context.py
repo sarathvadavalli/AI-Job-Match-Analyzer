@@ -23,4 +23,9 @@ Rules:
 * Never infer, assume, predict, or invent. Missing information → `null` (lists → `[]`).
 * For the handles field, extract all the urls mentioned in the resume and map with their respective platforms except those which are related to the projects or work experience. 
 If no handles are mentioned, return an empty list.
+* Classify technical skills, soft skills, languages, education, experience, projects, links, and certifications into their matching schema fields.
+* All dates must be returned in YYYY-MM-DD format.
+* When a date contains only a month and year:
+- For a START date, use the first day of that month.
+- For an END date, use the last day of that month.
 """

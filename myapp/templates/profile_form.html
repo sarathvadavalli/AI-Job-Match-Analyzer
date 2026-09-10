@@ -1,0 +1,704 @@
+<style>
+    .profile-app { color: #172033; }
+    .profile-app * { box-sizing: border-box; }
+    .profile-app .upload-panel, .profile-app .editor { background: #fff; border: 1px solid #dbe3ee; border-radius: 8px; }
+    .profile-app .upload-panel { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; padding: 20px; margin-bottom: 18px; }
+    .profile-app .file-picker { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .profile-app .hint { margin-top: 6px; color: #64748b; font-size: 14px; line-height: 1.5; }
+    .profile-app .file-name { color: #64748b; font-size: 14px; overflow-wrap: anywhere; }
+    .profile-app .status { min-height: 20px; margin-top: 10px; font-size: 14px; }
+    .profile-app .status.error { color: #b91c1c; }
+    .profile-app .status.success { color: #166534; }
+    .profile-app .tabs-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dbe3ee; padding-right: 16px; }
+    .profile-app .tabs { display: flex; gap: 4px; overflow-x: auto; padding: 8px 8px 0; }
+    .profile-app .tab { flex: 0 0 auto; border: 0; border-bottom: 3px solid transparent; padding: 12px 14px 11px; background: transparent; color: #64748b; font-weight: 700; cursor: pointer; }
+    .profile-app .tab.active { color: #1d4ed8; border-bottom-color: #1d4ed8; }
+    .profile-app .tab-panel { display: none; padding: 24px; }
+    .profile-app .tab-panel.active { display: block; }
+    .profile-app .panel-heading { display: flex; justify-content: space-between; align-items: start; gap: 16px; margin-bottom: 20px; }
+    .profile-app .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; }
+    .profile-app .field { display: flex; flex-direction: column; gap: 7px; }
+    .profile-app .field.full { grid-column: 1 / -1; }
+    .profile-app label { color: #334155; font-size: 13px; font-weight: 700; }
+    .profile-app .required-mark { color: #b91c1c; margin-left: 3px; }
+    .profile-app input, .profile-app textarea, .profile-app select { width: 100%; border: 1px solid #cbd5e1; border-radius: 5px; padding: 10px 11px; color: #172033; background: #fff; font: inherit; font-size: 14px; }
+    .profile-app input:read-only, .profile-app textarea:read-only, .profile-app select:disabled { background: #d0d8dc; color: #1f2020; border-color: #e2e8f0; cursor: not-allowed; }
+    .profile-app input[type="checkbox"]:disabled { cursor: not-allowed; }
+    .profile-app textarea { min-height: 92px; resize: vertical; line-height: 1.45; }
+    .profile-app input:not(:read-only):focus, .profile-app textarea:not(:read-only):focus, .profile-app select:not(:read-only):focus { outline: 2px solid #bfdbfe; border-color: #1d4ed8; }
+    .profile-app .collection { display: grid; gap: 14px; }
+    .profile-app .collection-item { padding: 16px; border: 1px solid #dbe3ee; border-radius: 7px; background: #fbfdff; }
+    .profile-app .item-heading, .profile-app .skill-group-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .profile-app .item-heading { margin-bottom: 14px; }
+    .profile-app .item-heading span { color: #64748b; font-size: 13px; font-weight: 700; }
+    .profile-app .empty { padding: 18px; border: 1px dashed #cbd5e1; color: #64748b; text-align: center; font-size: 14px; }
+    .profile-app .skill-groups { display: grid; gap: 22px; }
+    .profile-app .skill-group { display: grid; gap: 10px; }
+    .profile-app .skill-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .profile-app .button { cursor: pointer; font-weight: 700; min-height: 40px; border: 1px solid #1d4ed8; border-radius: 6px; padding: 9px 14px; color: #fff; background: #1d4ed8; font-size: 14px; }
+    .profile-app .button:hover { background: #1e40af; }
+    /*.profile-app .button.secondary { color: #172033; background: #fff; border-color: #dbe3ee; }
+    .profile-app .button.secondary:hover { background: #f8fafc; }*/
+    .profile-app .button:disabled { opacity: .6; cursor: wait; }
+    .profile-app .actions { display: flex; justify-content: flex-end; gap: 10px; padding: 18px 24px; border-top: 1px solid #dbe3ee; }
+    .profile-app dialog { width: min(520px, calc(100% - 32px)); border: 0; border-radius: 8px; padding: 0; box-shadow: 0 20px 50px rgba(15, 23, 42, .25); }
+    .profile-app dialog::backdrop { background: rgba(15, 23, 42, .42); }
+    .profile-app .dialog-body { padding: 24px; }
+    .profile-app .dialog-body pre { max-height: 55vh; overflow: auto; padding: 14px; background: #f8fafc; border: 1px solid #dbe3ee; font-size: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .profile-app .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .profile-app .button.success {
+        background: #166534;
+        border-color: #166534;
+        color: #fff;
+    }
+    .profile-app .button.success:hover {
+        background: #15803d;
+    }
+    .profile-app .button.secondary {
+        color: #fff !important;
+        background: #1d4ed8 !important;
+        border-color: #dbe3ee !important;
+    }
+    .profile-app .button.secondary:hover {
+        background: #1e40af !important;
+    }
+    .add {
+        background-color: #d1d7df;
+        padding: 3px;
+        cursor: pointer;
+        border: none;
+    }
+    @media (max-width: 700px) { .profile-app .upload-panel { grid-template-columns: 1fr; } .profile-app .form-grid { grid-template-columns: 1fr; } .profile-app .field.full { grid-column: auto; } .profile-app .tab-panel { padding: 18px; } .profile-app .panel-heading { align-items: stretch; flex-direction: column; } .profile-app .panel-heading .button { align-self: flex-start; } .profile-app .actions { flex-direction: column-reverse; } .profile-app .actions .button { width: 100%; } }
+</style>
+
+<div class="profile-app">
+    <div style="margin-bottom: 18px">
+        <p style="color: #64748b; font-size: 14px">
+            Upload your resume to prefill the profile, then review and edit each section before confirming.
+        </p>
+    </div>
+    <section class="upload-panel" aria-labelledby="upload-title">
+        <div>
+            <h2 id="upload-title">Resume upload</h2>
+            <p class="hint">PDF, DOCX, or TXT files are supported.</p>
+            <div id="uploadStatus" class="status" role="status"></div>
+        </div>
+        <div class="file-picker">
+            <input id="resumeFile" type="file" accept=".pdf,.docx,.txt" /><span id="fileName" class="file-name"
+                >No file selected</span
+            ><button id="analyzeButton" class="button" type="button">Analyze and autofill</button>
+        </div>
+    </section>
+    <section class="editor">
+        <div class="tabs-header">
+            <nav class="tabs" role="tablist" aria-label="Profile sections">
+                <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="personal">Personal</button>
+                <button class="tab" type="button" role="tab" aria-selected="false" data-tab="skills">Skills</button>
+                <button class="tab" type="button" role="tab" aria-selected="false" data-tab="education">Education</button>
+                <button class="tab" type="button" role="tab" aria-selected="false" data-tab="experience">Experience</button>
+                <button class="tab" type="button" role="tab" aria-selected="false" data-tab="projects">Projects</button>
+                <button class="tab" type="button" role="tab" aria-selected="false" data-tab="links">Links</button>
+                <button class="tab" type="button" role="tab" aria-selected="false" data-tab="certifications">Certifications</button>
+            </nav>
+        </div>
+        <div id="personal" class="tab-panel active" role="tabpanel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Personal information</h2>
+                    <p class="hint">Keep your contact details and summary up to date.</p>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="field"><label for="name">Name<span class="required-mark">*</span></label><input id="name" data-personal="name" required /></div>
+                <div class="field">
+                    <label for="email">Contact email<span class="required-mark">*</span></label><input id="email" type="email" data-personal="email" required />
+                </div>
+                <div class="field"><label for="phone">Phone<span class="required-mark">*</span></label><input id="phone" data-personal="phone" required /></div>
+                <div class="field">
+                    <label for="location">Location</label><input id="location" data-personal="location" />
+                </div>
+                <div class="field full">
+                    <label for="summary">Professional Summary</label
+                    ><textarea id="summary" data-personal="summary"></textarea>
+                </div>
+            </div>
+        </div>
+        <div id="skills" class="tab-panel" role="tabpanel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Skills</h2>
+                    <p class="hint">View and update your key technical, soft, and language skills.</p>
+                </div>
+            </div>
+            <div class="skill-groups">
+                <div class="skill-group">
+                    <div class="skill-group-header">
+                        <h3>Technical Skills<span class="required-mark">*</span></h3>
+                    </div>
+                    <div id="technicalSkills" class="collection"></div>
+                </div>
+                <div class="skill-group">
+                    <div class="skill-group-header">
+                        <h3>Soft Skills</h3>
+                    </div>
+                    <div id="softSkills" class="collection"></div>
+                </div>
+                <div class="skill-group">
+                    <div class="skill-group-header">
+                        <h3>Languages</h3>
+                    </div>
+                    <div id="languages" class="collection"></div>
+                </div>
+            </div>
+        </div>
+        <div id="education" class="tab-panel" role="tabpanel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Education</h2>
+                    <p class="hint">Your academic history and qualifications.</p>
+                </div>
+            </div>
+            <div id="educationCollection" class="collection"></div>
+        </div>
+        <div id="experience" class="tab-panel" role="tabpanel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Experience</h2>
+                    <p class="hint">Capture your roles, dates, and responsibilities.</p>
+                </div>
+            </div>
+            <div id="experienceCollection" class="collection"></div>
+        </div>
+        <div id="projects" class="tab-panel" role="tabpanel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Projects</h2>
+                    <p class="hint">Showcase work with useful links and technologies.</p>
+                </div>
+            </div>
+            <div id="projectsCollection" class="collection"></div>
+        </div>
+        <div id="links" class="tab-panel" role="tabpanel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Links</h2>
+                    <p class="hint">Your GitHub, LinkedIn, coding profiles, or portfolio.</p>
+                </div>
+            </div>
+            <div id="linksCollection" class="collection"></div>
+        </div>
+        <div id="certifications" class="tab-panel" role="tabpanel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Certifications</h2>
+                    <p class="hint">Your credentials and their validity dates.</p>
+                </div>
+            </div>
+            <div id="certificationsCollection" class="collection"></div>
+        </div>
+        <div class="actions">
+            <button id="clearButton" class="button secondary" type="button" style="display: none;">Clear form</button
+            ><button id="confirmButton" class="button" type="button">Edit profile</button>
+        </div>
+    </section>
+    <dialog id="profileDialog">
+        <div class="dialog-body">
+            <h2>Profile JSON</h2>
+            <p class="hint">This is the data that will be sent to the profile endpoint.</p>
+            <pre id="profileJson"></pre>
+            <div class="dialog-actions">
+                <button id="closeDialog" class="button secondary" type="button">Close</button
+                ><button id="saveDialog" class="button" type="button">Save profile</button>
+            </div>
+        </div>
+    </dialog>
+</div>
+
+<script id="profile-data" type="application/json">
+    {{ (profile or {}) | tojson | safe }}
+</script>
+
+<script>
+    const profileEl = document.getElementById("profile-data");
+    let initialProfile = {};
+    try {
+        initialProfile = JSON.parse(profileEl.textContent || "{}");
+    } catch (err) {
+        console.error("Failed to parse profile JSON:", err);
+    }
+
+    let isEditing = false;
+
+    const state = {
+        name: "",
+        email: "",
+        phone: "",
+        location: "",
+        summary: "",
+        technical_skills: [],
+        soft_skills: [],
+        languages: [],
+        education: [],
+        experience: [],
+        projects: [],
+        links: [],
+        certifications: [],
+    };
+
+    const configs = {
+        education: {
+            label: "Education",
+            fields: [
+                ["degree", "Degree", "input", null, true],
+                ["field", "Field", "input"],
+                ["institution", "Institution", "input", null, true],
+                ["start_year", "Start Year", "input", "number"],
+                ["graduation_year", "Graduation Year", "input", "number", true],
+                ["cgpa", "CGPA / Percentage", "input", "number", true],
+            ],
+        },
+        experience: {
+            label: "Experience",
+            fields: [
+                ["company", "Company", "input", null, true],
+                ["role", "Role", "input", null, true],
+                [
+                    "employment_type",
+                    "Employment Type",
+                    "select",
+                    ["Full-time", "Part-time", "Contract", "Internship", "Freelance"],
+                ],
+                ["location", "Location", "input"],
+                ["start_date", "Start Date", "input", "date"],
+                ["end_date", "End Date", "input", "date"],
+                ["current_job", "Current Job", "checkbox"],
+                ["responsibilities", "Responsibilities", "textarea"],
+            ],
+        },
+        projects: {
+            label: "Project",
+            fields: [
+                ["name", "Project Name", "input", null, true],
+                ["technologies", "Technologies", "input"],
+                ["github_repo", "GitHub Repository", "input", "url"],
+                ["live_url", "Live URL", "input", "url"],
+                ["description", "Description", "textarea"],
+            ],
+        },
+        links: {
+            label: "Link",
+            fields: [
+                ["type", "Type", "select", ["GitHub", "LinkedIn", "Coding Profile", "Portfolio", "Other"]],
+                ["title", "Title", "input"],
+                ["url", "URL", "input", "url"],
+            ],
+        },
+        certifications: {
+            label: "Certification",
+            fields: [
+                ["name", "Certification Name", "input"],
+                ["organization", "Organization", "input"],
+                ["url", "URL", "input", "url"],
+                ["valid_from", "Valid From", "input", "date"],
+                ["valid_until", "Valid Until", "input", "date"],
+            ],
+        },
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const escapeHtml = (value) =>
+        String(value ?? "").replace(
+            /[&<>'"]/g,
+            (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]
+        );
+    const asArray = (value) => (Array.isArray(value) ? value : []);
+    const toList = (value) =>
+        Array.isArray(value)
+            ? value
+            : value
+              ? String(value)
+                    .split(/[,\n]/)
+                    .map((item) => item.trim())
+                    .filter(Boolean)
+              : [];
+
+    function normalizeProfile(data) {
+        state.name = data.name || "";
+        state.email = data.email || "";
+        state.phone = data.phone || "";
+        state.location = data.location || "";
+        state.summary = data.summary || data.professional_summary || "";
+        state.technical_skills = toList(data.technical_skills?.length ? data.technical_skills : data.skills);
+        state.soft_skills = toList(data.soft_skills);
+        state.languages = toList(data.languages);
+        state.education = asArray(data.education).map((item) => ({ ...item }));
+        state.experience = asArray(data.experience).map((item) => ({
+            ...item,
+            responsibilities: toList(item.responsibilities),
+        }));
+        state.projects = asArray(data.projects).map((item) => ({ ...item, technologies: toList(item.technologies) }));
+        state.certifications = asArray(data.certifications).map((item) => ({ ...item }));
+        state.links = [
+            ...asArray(data.handles).map((item) => ({
+                type: item.platform || "Other",
+                title: "",
+                url: item.url || "",
+            })),
+            ...asArray(data.links).map((item) => ({
+                type: item.type || "Other",
+                title: item.title || "",
+                url: item.url || "",
+            })),
+        ];
+        renderAll();
+    }
+
+    function fieldMarkup(field, value) {
+        const [key, label, kind, extra, required] = field;
+        const requiredAttribute = required ? " required" : "";
+        const requiredLabel = required ? `${label}<span class="required-mark">*</span>` : label;
+        if (kind === "checkbox")
+            return `<div class="field"><label><input type="checkbox" data-field="${key}" ${value ? "checked" : ""}${requiredAttribute}> ${requiredLabel}</label></div>`;
+        if (kind === "textarea")
+            return `<div class="field full"><label>${requiredLabel}</label><textarea data-field="${key}"${requiredAttribute}>${escapeHtml(Array.isArray(value) ? value.join("\n") : value)}</textarea></div>`;
+        if (kind === "select")
+            return `<div class="field"><label>${requiredLabel}</label><select data-field="${key}"${requiredAttribute}><option value="">Select</option>${extra.map((option) => `<option ${value === option ? "selected" : ""}>${option}</option>`).join("")}</select></div>`;
+        return `<div class="field"><label>${requiredLabel}</label><input type="${extra || "text"}" data-field="${key}" value="${escapeHtml(value)}"${requiredAttribute}></div>`;
+    }
+
+    // Render Array Collections (Education, Experience, Projects, Links, Certifications)
+    function renderCollection(section) {
+        const container = $(`#${section}Collection`),
+            config = configs[section],
+            items = state[section];
+            
+        if (!container) return;
+
+        let html = "";
+        if (items.length) {
+            html = items.map((item, index) => `
+                <div class="collection-item" data-index="${index}">
+                    <div class="item-heading">
+                        <span>${config.label} ${index + 1}</span>
+                        ${isEditing ? `<button type="button" class="add" style="min-height:30px; padding:2px 8px; font-size:12px;" onclick="removeItem('${section}', ${index})">×</button>` : ""}
+                    </div>
+                    <div class="form-grid">
+                        ${config.fields.map((field) => fieldMarkup(field, item[field[0]])).join("")}
+                    </div>
+                </div>
+            `).join("");
+        } else {
+            html = `<div class="empty">No ${config.label.toLowerCase()} entries found.</div>`;
+        }
+
+        // Append + Add button if editing
+        if (isEditing) {
+            html += `<button type="button" class="add" style="margin-top:10px;" onclick="addItem('${section}')">+ Add ${config.label}</button>`;
+        }
+
+        container.innerHTML = html;
+    }
+
+    // Render Skills Collections
+    function renderSkills() {
+        const skillGroups = [
+            ["technicalSkills", "technical_skills", "Technical Skill"],
+            ["softSkills", "soft_skills", "Soft Skill"],
+            ["languages", "languages", "Language"]
+        ];
+
+        skillGroups.forEach(([id, key, label]) => {
+            const container = $(`#${id}`);
+            if (!container) return;
+
+            let html = "";
+            if (state[key].length) {
+                html = state[key].map((value, index) => `
+                    <div class="skill-row" style="display:flex; gap:8px;">
+                        <input data-skill-field="${key}" data-index="${index}" value="${escapeHtml(value)}" aria-label="${key} ${index + 1}">
+                        ${isEditing ? `<button type="button" class="button" style="min-height:38px; padding:0 12px;" onclick="removeSkill('${key}', ${index})">×</button>` : ""}
+                    </div>
+                `).join("");
+            } else {
+                html = `<div class="empty">No entries found.</div>`;
+            }
+
+            // Append + Add button if editing
+            if (isEditing) {
+                html += `<button type="button" class="add" style="margin-top:6px;" onclick="addSkill('${key}')">+ Add ${label}</button>`;
+            }
+
+            container.innerHTML = html;
+        });
+    }
+
+    // Global Helper Functions for Dynamic Add/Remove
+    window.addItem = function(section) {
+        readForm();
+        state[section].push({});
+        renderCollection(section);
+        applyReadonlyState();
+    };
+
+    window.removeItem = function(section, index) {
+        readForm();
+        state[section].splice(index, 1);
+        renderCollection(section);
+        applyReadonlyState();
+    };
+
+    window.addSkill = function(key) {
+        readForm();
+        state[key].push("");
+        renderSkills();
+        applyReadonlyState();
+    };
+
+window.removeSkill = function(key, index) {
+    readForm();
+    state[key].splice(index, 1);
+    renderSkills();
+    applyReadonlyState();
+};
+
+    function renderAll() {
+        document
+            .querySelectorAll("[data-personal]")
+            .forEach((input) => (input.value = state[input.dataset.personal] || ""));
+        renderSkills();
+        ["education", "experience", "projects", "links", "certifications"].forEach(renderCollection);
+        applyReadonlyState();
+    }
+
+    function applyReadonlyState() {
+        document.querySelectorAll(".editor input:not([type='file']), .editor textarea").forEach((field) => {
+            if (!isEditing) {
+                field.setAttribute("readonly", "readonly");
+                if (field.type === "checkbox") field.setAttribute("disabled", "disabled");
+            } else {
+                field.removeAttribute("readonly");
+                if (field.type === "checkbox") field.removeAttribute("disabled");
+            }
+        });
+
+        document.querySelectorAll(".editor select").forEach((select) => {
+            if (!isEditing) {
+                select.setAttribute("disabled", "disabled");
+            } else {
+                select.removeAttribute("disabled");
+            }
+        });
+    }
+
+    function readForm() {
+        document
+            .querySelectorAll("[data-personal]")
+            .forEach((input) => (state[input.dataset.personal] = input.value.trim()));
+        document
+            .querySelectorAll("[data-skill-field]")
+            .forEach((input) => (state[input.dataset.skillField][Number(input.dataset.index)] = input.value.trim()));
+        Object.keys(configs).forEach((section) => {
+            document.querySelectorAll(`#${section}Collection .collection-item`).forEach((element, index) => {
+                const item = state[section][index];
+                element
+                    .querySelectorAll("[data-field]")
+                    .forEach(
+                        (input) =>
+                            (item[input.dataset.field] = input.type === "checkbox" ? input.checked : input.value.trim())
+                    );
+                if (element.querySelector('[data-field="responsibilities"]'))
+                    item.responsibilities = toList(element.querySelector('[data-field="responsibilities"]').value);
+                if (element.querySelector('[data-field="technologies"]'))
+                    item.technologies = toList(element.querySelector('[data-field="technologies"]').value);
+            });
+        });
+        state.technical_skills = state.technical_skills.filter(Boolean);
+        state.soft_skills = state.soft_skills.filter(Boolean);
+        state.languages = state.languages.filter(Boolean);
+        return buildPayload();
+    }
+
+    function buildPayload() {
+        return {
+            name: state.name,
+            email: state.email,
+            phone: state.phone,
+            location: state.location,
+            summary: state.summary,
+            technical_skills: state.technical_skills,
+            soft_skills: state.soft_skills,
+            languages: state.languages,
+            education: state.education,
+            experience: state.experience,
+            projects: state.projects,
+            certifications: state.certifications,
+            handles: state.links
+                .filter((item) => item.type && item.url)
+                .map((item) => ({ platform: item.type, url: item.url })),
+            links: state.links
+                .filter((item) => item.url)
+                .map((item) => ({ type: item.type || "Other", title: item.title || null, url: item.url })),
+        };
+    }
+
+    function showStatus(message, type) {
+        const status = $("#uploadStatus");
+        status.textContent = message;
+        status.className = `status ${type || ""}`;
+    }
+
+    function isBlank(value) {
+        return value === null || value === undefined || String(value).trim() === "";
+    }
+
+    function validationError(section, message) {
+        const tab = document.querySelector(`.tab[data-tab="${section}"]`);
+        if (tab) tab.click();
+        showStatus(message, "error");
+        return false;
+    }
+
+    function validateProfile() {
+        if (isBlank(state.name)) return validationError("personal", "Name is required.");
+        if (isBlank(state.email)) return validationError("personal", "Contact email is required.");
+        if (isBlank(state.phone)) return validationError("personal", "Phone is required.");
+        if (!state.technical_skills.some((skill) => !isBlank(skill))) return validationError("skills", "Add at least one technical skill.");
+
+        for (let index = 0; index < state.education.length; index += 1) {
+            const item = state.education[index];
+            if (isBlank(item.degree) || isBlank(item.institution) || isBlank(item.graduation_year) || isBlank(item.cgpa)) {
+                return validationError("education", `Complete Degree, Institution, Graduation Year, and CGPA / Percentage for education entry ${index + 1}.`);
+            }
+        }
+        for (let index = 0; index < state.experience.length; index += 1) {
+            const item = state.experience[index];
+            if (isBlank(item.company) || isBlank(item.role)) return validationError("experience", `Company and Role are required for experience entry ${index + 1}.`);
+        }
+        for (let index = 0; index < state.projects.length; index += 1) {
+            if (isBlank(state.projects[index].name)) return validationError("projects", `Project Name is required for project entry ${index + 1}.`);
+        }
+        return true;
+    }
+
+    // Tab Navigation Logic
+    document.querySelector(".tabs").addEventListener("click", (event) => {
+        const tabBtn = event.target.closest(".tab");
+        if (!tabBtn) return;
+        event.preventDefault();
+
+        const targetTab = tabBtn.dataset.tab;
+
+        document.querySelectorAll(".tab").forEach((t) => {
+            t.classList.remove("active");
+            t.setAttribute("aria-selected", "false");
+        });
+        tabBtn.classList.add("active");
+        tabBtn.setAttribute("aria-selected", "true");
+
+        document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+        const activePanel = document.getElementById(targetTab);
+        if (activePanel) {
+            activePanel.classList.add("active");
+        }
+    });
+
+    $("#resumeFile").addEventListener(
+        "change",
+        (event) => ($("#fileName").textContent = event.target.files[0]?.name || "No file selected")
+    );
+
+    $("#analyzeButton").addEventListener("click", async () => {
+        const file = $("#resumeFile").files[0];
+        if (!file) {
+            showStatus("Select a resume first.", "error");
+            return;
+        }
+        const formData = new FormData();
+        formData.append("file", file);
+        const button = $("#analyzeButton");
+        button.disabled = true;
+        button.textContent = "Analyzing...";
+        showStatus("", "");
+        try {
+            const response = await fetch("/resume/extract", { method: "POST", body: formData });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail || "Resume extraction failed.");
+            }
+            normalizeProfile(data);
+            showStatus("Resume analyzed and fields autofilled.", "success");
+        } catch (error) {
+            showStatus("Failed to process resume due to server error", "error");
+        } finally {
+            button.disabled = false;
+            button.textContent = "Analyze and autofill";
+        }
+    });
+
+    $("#clearButton").addEventListener("click", () => {
+        normalizeProfile({});
+        showStatus("Form cleared.", "success");
+    });
+
+const confirmBtn = document.getElementById("confirmButton");
+const clearBtn = document.getElementById("clearButton");
+
+$("#confirmButton").addEventListener("click", () => {
+    if (!isEditing) {
+        isEditing = true;
+        confirmBtn.textContent = "Confirm profile";
+        confirmBtn.classList.remove("secondary");
+        confirmBtn.classList.add("success");
+        clearBtn.style.display = "inline-block";
+        renderAll();
+        showStatus("Edit mode enabled.", "success");
+    } else {
+        readForm();
+        if (!validateProfile()) return;
+        isEditing = false;
+
+        const payload = readForm();
+        $("#profileJson").textContent = JSON.stringify(payload, null, 2);
+        $("#profileDialog").showModal();
+        //confirmBtn.textContent = "Edit profile";
+        //confirmBtn.classList.remove("success");
+        //confirmBtn.classList.add("secondary");
+        //clearBtn.style.display = "none";
+        //applyReadonlyState();
+        //showStatus("Changes saved to state.", "success");
+    }
+}); // Fixed syntax here
+        //const payload = readForm();
+        //if (!validateProfile()) return;
+        //$("#profileJson").textContent = JSON.stringify(payload, null, 2);
+        //$("#profileDialog").showModal();
+
+
+    $("#closeDialog").addEventListener("click", () => $("#profileDialog").close());
+
+    $("#saveDialog").addEventListener("click", async () => {
+        const button = $("#saveDialog");
+        button.disabled = true;
+        button.textContent = "Saving...";
+        try {
+            const response = await fetch("/profile", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(readForm()),
+            });
+            const data = await response.json();
+            $("#profileDialog").close();
+            if (!response.ok) throw new Error(data.detail || "Could not save profile.");
+            //$("#profileDialog").close();
+            showStatus("Profile saved successfully.", "success");
+        } catch (error) {
+            showStatus(error.message, "error");
+        } finally {
+            button.disabled = false;
+            button.textContent = "Save profile";
+        }
+    });
+
+    // Initialize application data
+    normalizeProfile(initialProfile);
+</script>

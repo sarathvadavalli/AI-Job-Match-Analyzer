@@ -7,6 +7,7 @@ settings = get_settings()
 client = MongoClient(settings.mongodb_uri)
 database = client[settings.mongodb_database]
 users_collection = database["users"]
+profiles_collection = database["profiles"]
 
 
 def init_db() -> None:
@@ -18,6 +19,12 @@ def init_db() -> None:
 
     users_collection.create_index(
         [("username", ASCENDING)],
+        unique=True,
+        name="unique_username",
+    )
+
+    profiles_collection.create_index(
+        [("userid", ASCENDING)],
         unique=True,
         name="unique_username",
     )

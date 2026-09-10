@@ -71,13 +71,13 @@ def login_user(payload: UserLogin, response: Response):
         httponly=True,
         secure=True,
         samesite="lax",
-        max_age=60*60
+        max_age= 60*60
     )
 
     return {"message": "Login successful"}
 
 
-@router.post("/auth/logout", response_model=MessageResponse)
+@router.post("/logout", response_model=MessageResponse)
 def logout(response: Response):
     response.delete_cookie(
         key="access_token"

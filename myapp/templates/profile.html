@@ -33,31 +33,12 @@
         }
 
         main {
-            width: min(92%, 560px);
+            width: min(1180px, calc(100% - 32px));
             margin: 36px auto;
             padding: 28px;
             border-radius: 8px;
             background: #ffffff;
             box-shadow: 0 16px 35px rgba(15, 23, 42, 0.1);
-        }
-
-        dl {
-            display: grid;
-            gap: 16px;
-        }
-
-        dt {
-            color: #64748b;
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        dd {
-            margin-top: 4px;
-            color: #111827;
-            font-size: 17px;
-            overflow-wrap: anywhere;
         }
 
         a {
@@ -80,27 +61,7 @@
     </header>
 
     <main>
-        <dl>
-            <div>
-                <dt>Name</dt>
-                <dd id="profileName">{{ user.name }}</dd>
-            </div>
-
-            <div>
-                <dt>Email</dt>
-                <dd id="profileEmail">{{ user.email }}</dd>
-            </div>
-
-            <div>
-                <dt>Created</dt>
-                <dd id="profileCreated">{{ user.created_at }}</dd>
-            </div>
-
-            <div>
-                <dt>Last Login</dt>
-                <dd id="profileLastLogin">{{ user.last_login_at }}</dd>
-            </div>
-        </dl>
+        {% include "profile_form.html" %}
     </main>
 
 </body>

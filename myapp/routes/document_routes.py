@@ -57,7 +57,8 @@ async def extract_resume_info(file: UploadFile = File(...)):
         if isinstance(result, str) and result.startswith("Error:"):
             raise HTTPException(status_code=502, detail=result)
 
-        return JSONResponse(content=result.dict())
+        profile = result.model_dump(mode="json")
+        return profile
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
