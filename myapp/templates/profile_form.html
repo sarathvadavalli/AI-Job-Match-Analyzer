@@ -39,44 +39,39 @@
     .profile-app .button:hover { background: #1e40af; }
     .profile-app .button:disabled { opacity: .6; cursor: wait; }
     .profile-app .actions { display: flex; justify-content: flex-end; gap: 10px; padding: 18px 24px; border-top: 1px solid #dbe3ee; }
-.profile-app dialog {
-  width: min(520px, calc(100% - 32px));
-  border: 0;
-  border-radius: 8px;
-  padding: 0;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, .25);
-  
-  /* Enforce exact center alignment on screen */
-  position: fixed;
-  inset: 0;
-  margin: auto;
-}
-
-.profile-app dialog::backdrop {
-  background: rgba(15, 23, 42, .42);
-}
-
-.profile-app .dialog-body {
-  padding: 24px;
-}
-
-.profile-app .dialog-body pre {
-  max-height: 55vh;
-  overflow: auto;
-  padding: 14px;
-  background: #f8fafc;
-  border: 1px solid #dbe3ee;
-  font-size: 12px;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.profile-app .dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 18px;
-}    .profile-app .button.success {
+    .profile-app dialog {
+        width: min(520px, calc(100% - 32px));
+        border: 0;
+        border-radius: 8px;
+        padding: 0;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, .25);
+        position: fixed;
+        inset: 0;
+        margin: auto;
+    }
+    .profile-app dialog::backdrop {
+        background: rgba(15, 23, 42, .42);
+    }
+    .profile-app .dialog-body {
+        padding: 24px;
+    }
+    .profile-app .dialog-body pre {
+        max-height: 55vh;
+        overflow: auto;
+        padding: 14px;
+        background: #f8fafc;
+        border: 1px solid #dbe3ee;
+        font-size: 12px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+    .profile-app .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 18px;
+    }    
+    .profile-app .button.success {
         background: #166534;
         border-color: #166534;
         color: #fff;
@@ -704,12 +699,7 @@ $("#confirmButton").addEventListener("click", () => {
         //applyReadonlyState();
         //showStatus("Changes saved to state.", "success");
     }
-}); // Fixed syntax here
-        //const payload = readForm();
-        //if (!validateProfile()) return;
-        //$("#profileJson").textContent = JSON.stringify(payload, null, 2);
-        //$("#profileDialog").showModal();
-
+});
 
     $("#closeDialog").addEventListener("click", () => $("#profileDialog").close());
 

@@ -5,14 +5,14 @@
   },
   {
     "id": 2,
-    "description": "Title: Backend Developer - min 2 years of experience\nLocation: Chennai/Bangalore\nRequirements:\nStrong knowledge of any backend framework like Django, FastAPI etc.\nUnderstanding of REST APIs and backend architecture\nProblem-solving mindset and clean coding practices\nMust be able to work in a fast-paced environment and learn new technologies quickly.\nGood to Have experience with AWS/Firebase/GCP"
+    "description": "Title: Backend Developer - min 1 years of experience\nLocation: Chennai/Bangalore\nRequirements:\nStrong knowledge of any backend framework like Django, FastAPI etc.\nUnderstanding of REST APIs and backend architecture\nProblem-solving mindset and clean coding practices\nMust be able to work in a fast-paced environment and learn new technologies quickly.\nGood to Have experience with AWS/Firebase/GCP"
   },
   {
     "id": 3,
-    "description": "Strong knowledge of Django and Flask, Express frameworks. Good to have understanding of Microsoft Azure and cloud services."
+    "description": "Role: Full Stack Developer\nMandatory Skills\n - Strong proficiency in JavaScript, TypeScript, and modern web development concepts\n - Hands-on experience with frontend frameworks such as Angular, React, or Vue.js\n - Strong experience in developing responsive web applications using HTML5, CSS3, and JavaScript\n - Experience in building reusable UI components and implementing responsive, mobile-first designs\n - Hands-on experience with backend development using Node.js, Java Spring Boot, .NET, or similar technologies\n - Strong experience in designing, developing, and optimizing RESTful APIs and microservices\n - Experience integrating frontend applications with backend services and external APIs\n - Knowledge of database design, querying, and performance optimization for SQL and NoSQL databases (including MongoDB)\n - Experience with authentication and authorization mechanisms such as OAuth2, JWT, and SSO\n - Familiarity with version control systems such as Git and collaborative development workflows\n - Understanding of software design principles, object-oriented programming, and application architecture patterns\n - Experience with testing frameworks and debugging techniques across frontend and backend applications\n Desirable Skills\n - Experience with Docker and Kubernetes\n - Exposure to CI/CD pipelines and DevOps practices\n - Familiarity with cloud platforms such as AWS, Azure, or Google Cloud\n - Experience with state management frameworks such as Redux, NgRx, or Vuex\n - Knowledge of server-side rendering (SSR) and frontend performance optimization techniques\n - Experience with event-driven architectures and messaging platforms such as Kafka or RabbitMQ\n - Familiarity with Apache Camel and enterprise integration patterns\n - Understanding of accessibility (WCAG) standards and UI/UX best practices\n - Exposure to automated testing tools such as Jest, Cypress, Selenium, JUnit, or Playwright\n - Strong communication, stakeholder management, and documentation skills\n"
   },
   {
     "id": 4,
-    "description": "Strong knowledge of any programming language like python, java etc. 1 year of experience on Django + PostgreSQL or Flask + MongoDB"
+    "description": "Strong knowledge of any programming language like python, java etc. 1 year of experience on Django + MySQL or Flask + MongoDB"
   }
 ]

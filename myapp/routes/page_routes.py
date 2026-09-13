@@ -86,7 +86,7 @@ def save_profile(profile: dict = Body(...), user=Depends(get_current_user)):
     return {"message": "Profile saved successfully.", "profile": profile}
 
 
-@router.get("/upload/jd")
+@router.get("/jd/upload")
 def upload_jd_page(request: Request, user = Depends(get_current_user)):
     return templates.TemplateResponse(
         request,
@@ -95,7 +95,7 @@ def upload_jd_page(request: Request, user = Depends(get_current_user)):
     )
 
 
-@router.get("/upload/resume")
+@router.get("/resume/upload")
 def upload_resume_page(request: Request, user = Depends(get_current_user)):
     return templates.TemplateResponse(
         request,

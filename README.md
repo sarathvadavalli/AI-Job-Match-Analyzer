@@ -1,104 +1,171 @@
-# AI Resume & Job Description Analyzer
+# AI Job Match Analyzer
 
-An AI-powered application that extracts structured information from resumes
-and job descriptions using Large Language Model (LLM). The project is designed to eventually analyze a candidate's resume against a job description and provide meaningful insights about their compatibility.
+AI-powered resume and job-description analysis for faster, evidence-based applications.
 
-## Current Status
+The application extracts structured candidate data, compares it with a job description, and returns a practical match report.
 
-### Completed
+## What It Does
 
-- Resume information extraction
-- Job description information extraction
-- LLM-based structured data extraction
-- Pydantic-based response validation
-- Modular project architecture
+- **Authentication**: Authenticates the user with JWT technique by storing in a HttpOnly cookie.
+- **Profile management**: Upload a resume and autofill the input fields of profile. Review and edit extracted information before saving.
+- **Resume extraction**: Convert PDF, DOCX, or TXT resumes into structured profiles and store into Mongodb database.
+- **Match analysis**: Compare a saved profile with a job description and generates insights from it.
+- **Skill evidence**: Show matched skills with proficiency levels and supporting evidence.
+- **Gap analysis**: Separate required and optional missing skills.
+- **Actionable feedback**: Recommend focused improvements across skills, projects, experience, and education.
 
-### Planned
+## User Flow
 
-- Resume and JD matching
-- Skill matching and gap analysis
-- Match score generation
-- Candidate recommendations
-- Database integration
-- Frontend improvements
+1. Register or sign in.
+2. Upload a resume from the profile page for autofill.
+3. Review and save the extracted profile.
+4. Open **Match Analysis**.
+5. Upload a job description or paste its text.
+6. Review the score, strengths, gaps, and recommendations.
 
-## Features
+## Tech Stack
 
-### Resume Extraction
+- **Backend**: FastAPI, Python
+- **Authentication**: password hashing, JWT, HTTP-only cookies
+- **Validation**: Pydantic
+- **Templates**: Jinja2, HTML, CSS, JavaScript
+- **Database**: MongoDB with PyMongo
+- **Document parsing**: PyMuPDF, python-docx, optional Tesseract OCR
+- **LLM**: Google Gemini through `google-genai`
 
-Users can upload a resume, which is processed to extract structured
-candidate information such as:
+## Quick Start
 
-- Personal information
-- Skills
-- Education
-- Work experience
-- Projects
-- Profile links
+### Prerequisites
 
-### Job Description Extraction
+- Python 3.11 or newer
+- MongoDB running locally or a reachable MongoDB deployment
+- A Google Gemini API key
+- Tesseract OCR for scanned PDFs
 
-Users can upload a job description and extract structured information such as:
+### Install
 
-- Job title
-- Required skills
-- Preferred skills
-- Experience requirements
-- Education requirements
-- Responsibilities
-- Other job requirements
+```bash
+git clone <repository-url>
+cd JD_Extractor
+python -m venv .venv
+```
+
+Activate the virtual environment:
+
+```powershell
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+```
+
+```bash
+# macOS or Linux
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+### Configure Environment
+
+Create a `.env` file in the project root with the fields specified in `.env.example`
+
+### Run
+
+```bash
+python run.py
+```
+
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+FastAPI documentation is available at:
+
+- [Swagger UI](http://127.0.0.1:8000/docs)
+- [ReDoc](http://127.0.0.1:8000/redoc)
+
+The sample match response is available in output.json.
 
 ## Architecture
 
-The application follows a modular architecture where each component is
-responsible for a specific task.
-
 ```text
-Document Upload
-      │
-      ▼
-Text Extraction
-      │
-      ▼
-LLM Extraction
-      │
-      ▼
-Response Validation
-      │
-      ▼
-Structured Data
+ Browser
+   │
+   ▼
+FastAPI Routes
+   │
+   ├──────────────► AuthService ─────────► MongoDB
+   │
+   ├──────────────► ProfileService ──────► MongoDB
+   │
+   └──────────────► MatchService
+                         │
+                         ├──► DocumentService (For JD)
+                         │       └── PDF / DOCX / TXT / OCR
+                         |
+                         ├──► Profile Data from MongoDB
+                         |
+                         ├──► Pydantic for Profile and Matching Schema
+                         |
+                         ├──► LLMClient
+                         │       └── Gemini
+                                  │
+                                  ▼
+                            Matching Result
 ```
 
 ## Project Structure
 
 ```text
 JD_Extractor/
-├── .env.example
-├── .gitignore
-├── curl_command.sh
-├── README.md
-├── requirements.txt
-├── run.py
 ├── myapp/
 │   ├── main.py
-│   ├── routes.py
+│   ├── core/
+│   │   ├── config.py
+│   │   ├── db.py
+│   │   └── security.py
+│   ├── routes/
+│   │   ├── auth_routes.py
+│   │   ├── document_routes.py
+│   │   └── page_routes.py
 │   ├── schemas/
+│   │   ├── auth.py
 │   │   ├── job_extraction.py
+│   │   ├── job_match_result.py
 │   │   ├── job_response.py
 │   │   └── resume_extraction.py
 │   ├── services/
 │   │   ├── doc_service.py
 │   │   ├── job_service.py
+│   │   ├── match_service.py
 │   │   ├── resume_service.py
 │   │   └── llm/
 │   │       ├── client.py
 │   │       └── context.py
 │   └── templates/
+│       ├── analysis.html
+│       ├── dashboard.html
+│       ├── login.html
+│       ├── profile.html
+│       ├── profile_form.html
 │       ├── upload_jd.html
 │       └── upload_resume.html
-└── tests/
-      ├── __init__.py
-      ├── results.json
-      ├── test_extraction.py
-      └── testcases.json
+├── tests/
+├── requirements.txt
+├── run.py
+└── README.md
 ```
+
+## Testing
+
+Run the automated test suite with:
+
+```bash
+python -m tests.test_extraction
+```
+
+The extraction test workflow uses the cases in `tests/testcases.json` and writes results to `tests/results.json`.
+
+## License
+This project is licensed under the MIT License.

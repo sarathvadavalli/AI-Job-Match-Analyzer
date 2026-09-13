@@ -1,6 +1,12 @@
 import json
 import time
 from pathlib import Path
+from pymongo import MongoClient
+
+client = MongoClient('mongodb://localhost:27017')
+db = client['jd_extractor']
+user = db.users.find_one({'username': 'sai01'})
+profile = db.profiles.find_one({'user_id': user['_id']})
 
 from myapp.services.llm.client import LLMClient
 
@@ -29,8 +35,8 @@ def main():
         start_time = time.perf_counter()
 
         try:
-            extraction = llm_client.extract_job_info(
-                testcase["description"]
+            extraction = llm_client.generate_match_feedback(
+                profile, testcase["description"]
             )
 
             end_time = time.perf_counter()

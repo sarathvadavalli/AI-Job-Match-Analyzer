@@ -1,81 +1,45 @@
 {
-    "match_score": 72,
+    "match_score": 92,
     "skill_analysis": [
         {
-            "skill": "Backend Development (Python / Django / FastAPI / Node.js)",
+            "skill": "Python",
             "level": "strong",
-            "evidence": "1 year of backend development experience at Safertek IT Solutions using Django, Python, SQLAlchemy, and FastAPI for building web applications and automation tools."
+            "evidence": "Listed under technical skills, backed by Infosys Springboard certification, used extensively in work experience at Safertek IT Solutions and in multiple projects (Bus Reservation System, VisiOCR, URL Shortener)."
         },
         {
-            "skill": "RESTful APIs & Microservices",
+            "skill": "Django",
             "level": "strong",
-            "evidence": "Designed CRUD REST APIs using FastAPI, integrated with Bold Reports REST APIs, and tested endpoints using Postman."
+            "evidence": "Coursera (IBM) certified in Django Application Development. Used Django at Safertek IT Solutions for data mapping, and built multiple full-stack projects using Django (Bus Reservation System, VisiOCR System)."
         },
         {
-            "skill": "Database Design & Query Optimization",
+            "skill": "MySQL",
             "level": "strong",
-            "evidence": "Demonstrated expertise in SQL, stored procedures, schema migration (MS SQL Server to MariaDB), query optimization improving performance up to 90%, and working with MongoDB, MySQL, and PostgreSQL."
+            "evidence": "HackerRank SQL certified. Used MySQL in projects like Bus Reservation System and VisiOCR System, along with extensive relational database experience at Safertek IT Solutions (MS SQL Server, MariaDB, SQL query optimization)."
         },
         {
-            "skill": "Frontend Development (HTML, CSS, JavaScript)",
-            "level": "hands_on",
-            "evidence": "Listed HTML, CSS, and JS in technical skills and developed web application UIs for OCR and Bus Reservation projects."
-        },
-        {
-            "skill": "Frontend Frameworks (ReactJS)",
+            "skill": "Java",
             "level": "basic",
-            "evidence": "ReactJS is listed under technical skills, but practical project evidence primarily highlights Python backend development."
-        },
-        {
-            "skill": "Version Control (Git / GitHub)",
-            "level": "hands_on",
-            "evidence": "Listed Git and GitHub in technical skills and maintained repositories for multiple web projects."
-        },
-        {
-            "skill": "Cloud Platforms (AWS)",
-            "level": "hands_on",
-            "evidence": "Deployed Bus Reservation System on Vercel with MySQL database hosted on AWS RDS."
-        },
-        {
-            "skill": "Docker & CI/CD",
-            "level": "basic",
-            "evidence": "Docker and CI/CD listed under candidate technical skills."
+            "evidence": "Listed in technical skills with CSE degree coursework background, though primary project and work evidence is centered on Python."
         }
     ],
     "missing_skills": [
         {
-            "skill": "TypeScript",
-            "label": "required"
-        },
-        {
-            "skill": "Authentication & Authorization (OAuth2, JWT, SSO)",
-            "label": "required"
-        },
-        {
-            "skill": "State Management Frameworks (Redux / NgRx / Vuex)",
+            "skill": "Flask",
             "label": "optional"
         },
         {
-            "skill": "Automated Testing Frameworks (Jest, Cypress, JUnit)",
-            "label": "optional"
-        },
-        {
-            "skill": "Event-Driven Architecture (Kafka / RabbitMQ)",
+            "skill": "MongoDB",
             "label": "optional"
         }
     ],
     "feedback": [
         {
-            "label": "skills",
-            "description": "Acquire proficiency in TypeScript and standard authentication protocols such as JWT and OAuth2 to satisfy key mandatory full-stack requirements."
+            "label": "experience",
+            "description": "Transition from internship/contract implementation roles into dedicated full-time backend software development roles to strengthen practical industry experience."
         },
         {
             "label": "projects",
-            "description": "Build end-to-end full-stack applications with a dedicated React frontend integrated with state management tools (like Redux) to showcase frontend framework depth alongside backend expertise."
-        },
-        {
-            "label": "skills",
-            "description": "Gain hands-on experience with frontend and backend testing tools (e.g., Jest, Cypress, PyTest) to demonstrate comprehensive software quality practices."
+            "description": "Add details on production monitoring, CI/CD pipelines, and scalability metrics for Django and MySQL backend deployments."
         }
     ]
 }
