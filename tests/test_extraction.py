@@ -3,9 +3,11 @@ import time
 from pathlib import Path
 from pymongo import MongoClient
 
+user = input("Enter the username to extract profile:")
+
 client = MongoClient('mongodb://localhost:27017')
 db = client['jd_extractor']
-user = db.users.find_one({'username': 'sai01'})
+user = db.users.find_one({'username': user})
 profile = db.profiles.find_one({'user_id': user['_id']})
 
 from myapp.services.llm.client import LLMClient
