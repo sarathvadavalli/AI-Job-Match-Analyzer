@@ -1,4 +1,4 @@
-# AI Resume & Job Description Analyzer
+# AI Job Match Analyzer
 
 An AI-powered application that extracts structured information from resumes
 and job descriptions using Large Language Model (LLM). The project is designed to eventually analyze a candidate's resume against a job description and provide meaningful insights about their compatibility.
