@@ -102,3 +102,12 @@ def upload_resume_page(request: Request, user = Depends(get_current_user)):
         name="upload_resume.html",
         context={"request": request, "user": user}
     )
+
+
+@router.get("/analysis")
+def analysis_page(request: Request, user = Depends(get_current_user)):
+    return templates.TemplateResponse(
+        request,
+        name="analysis.html",
+        context={"request": request, "user": user}
+    )

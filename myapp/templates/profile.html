@@ -13,20 +13,26 @@
 
         body {
             min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background: #eef2f7;
-            color: #111827;
+            font-family: "Segoe UI", sans-serif;
+            color: #172033;
+            background: #f4f7fb;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 16px;
-            padding: 20px clamp(20px, 6vw, 64px);
-            background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
+            gap: 20px;
+            padding: 18px clamp(20px, 5vw, 72px);
+            background: #16324f;
+            color: #fff;
         }
+
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.45); border-radius: 6px; font-weight: 800; }
+        .brand span { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
+        nav { display: flex; gap: 18px; align-items: center; }
+        nav a { min-height: 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: #dcebf8; font-size: 14px; font-weight: 400; }
 
         h1 {
             font-size: clamp(24px, 4vw, 34px);
@@ -56,8 +62,8 @@
 </head>
 <body>
     <header>
-        <h1>Profile</h1>
-        <a href="/dashboard">Dashboard</a>
+        <div class="brand"><div class="brand-mark">JM</div><span>Job Match Intelligence</span></div>
+        <nav><a href="/dashboard">Dashboard</a><a href="/analysis">Match analysis</a></nav>
     </header>
 
     <main>

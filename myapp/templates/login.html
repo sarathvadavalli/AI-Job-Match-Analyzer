@@ -5,24 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - JD Extractor</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --ink: #172033;
+            --muted: #64748b;
+            --line: #dce3ec;
+            --paper: #ffffff;
+            --canvas: #f4f7fb;
+            --navy: #16324f;
+            --blue: #1769aa;
+            --blue-soft: #eaf4fb;
+            --green: #167a5a;
+            --green-soft: #e9f7f1;
+            --amber: #a66508;
+            --amber-soft: #fff5df;
+            --red: #b42318;
+            --red-soft: #fff0ee;
+            --shadow: 0 18px 50px rgba(22, 50, 79, 0.08);
         }
 
-        body {
-            min-height: 100vh;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { min-height: 100vh; font-family: "Segoe UI", sans-serif; color: var(--ink); background: var(--canvas); }
+        header { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 18px clamp(20px, 5vw, 72px); background: var(--navy); color: #fff; }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.45); border-radius: 6px; font-weight: 800; }
+        .brand span { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
+
+        .auth-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(420px, 1fr);
+            min-height: calc(100vh - 71px);
+        }
+
+        .product-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: clamp(44px, 8vw, 110px);
+            background: linear-gradient(145deg, #eaf4fb 0%, #f4f7fb 58%, #e9f7f1 100%);
+        }
+
+        .product-kicker {
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        .product-panel h1 {
+            max-width: 600px;
+            margin: 14px 0 18px;
+            color: var(--navy);
+            font-size: clamp(36px, 5vw, 68px);
+            line-height: 1.02;
+        }
+
+        .product-intro {
+            max-width: 540px;
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .product-points {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            max-width: 620px;
+            margin-top: 42px;
+        }
+
+        .product-point {
+            padding: 15px;
+            border: 1px solid rgba(22, 50, 79, .12);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, .62);
+        }
+
+        .product-point strong {
+            display: block;
+            color: var(--navy);
+            font-size: 14px;
+        }
+
+        .product-point span {
+            display: block;
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .auth-column {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: Arial, sans-serif;
-            background: #eef2f7;
-            color: #111827;
+            padding: 40px clamp(24px, 6vw, 92px);
+            background: var(--paper);
         }
 
         .auth-panel {
-            width: min(92%, 420px);
+            width: min(100%, 460px);
             padding: 32px;
             border-radius: 8px;
             background: #ffffff;
@@ -117,39 +200,70 @@
         .hidden {
             display: none;
         }
+
+        @media (max-width: 900px) {
+            .auth-layout { grid-template-columns: 1fr; }
+            .product-panel { min-height: 420px; padding: 56px 8vw; }
+            .auth-column { padding: 48px 24px 64px; }
+        }
+
+        @media (max-width: 560px) {
+            .product-panel h1 { font-size: 42px; }
+            .product-intro { font-size: 16px; }
+            .product-points { grid-template-columns: 1fr; margin-top: 28px; }
+            .auth-panel { padding: 24px; }
+        }
     </style>
 </head>
 <body>
-    <main class="auth-panel">
-        <h1>JD Extractor</h1>
-        <p class="subtitle">Sign in to continue to your dashboard.</p>
-
-        <div class="tabs" role="tablist">
-            <button class="tab active" type="button" id="loginTab">Login</button>
-            <button class="tab" type="button" id="registerTab">Register</button>
-        </div>
-
-        <form id="authForm">
-            <div id="nameGroup" class="hidden">
-                <label for="name">Name</label>
-                <input id="name" name="name" autocomplete="name">
+    <header>
+        <div class="brand"><div class="brand-mark">JM</div><span>Job Match Intelligence</span></div>
+    </header>
+    <main class="auth-layout">
+        <section class="product-panel">
+            <span class="product-kicker">Career intelligence workspace</span>
+            <h1>Turn job descriptions into your next move.</h1>
+            <p class="product-intro">JD Extractor helps you understand how your experience lines up with real opportunities, so every application starts with sharper evidence and a clearer strategy.</p>
+            <div class="product-points">
+                <article class="product-point"><strong>Build your profile</strong><span>Keep skills, experience, projects, and links in one place.</span></article>
+                <article class="product-point"><strong>Measure fit</strong><span>See strengths and skill gaps against a specific role.</span></article>
+                <article class="product-point"><strong>Act with focus</strong><span>Get practical feedback for your next improvement.</span></article>
             </div>
+        </section>
 
-            <label id="usernameLabel" for="username">Username or Email</label>
-            <input id="username" name="username" type="text" autocomplete="username" required>
+        <section class="auth-column">
+            <div class="auth-panel">
+                <h2>JD Extractor</h2>
+                <p class="subtitle">Sign in to continue to your dashboard.</p>
 
-            <div id="emailGroup" class="hidden">
-                <label for="email">Email</label>
-                <input id="email" name="email" type="email" autocomplete="email">
+                <div class="tabs" role="tablist">
+                    <button class="tab active" type="button" id="loginTab">Login</button>
+                    <button class="tab" type="button" id="registerTab">Register</button>
+                </div>
+
+                <form id="authForm">
+                    <div id="nameGroup" class="hidden">
+                        <label for="name">Name</label>
+                        <input id="name" name="name" autocomplete="name">
+                    </div>
+
+                    <label id="usernameLabel" for="username">Username or Email</label>
+                    <input id="username" name="username" type="text" autocomplete="username" required>
+
+                    <div id="emailGroup" class="hidden">
+                        <label for="email">Email</label>
+                        <input id="email" name="email" type="email" autocomplete="email">
+                    </div>
+
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required minlength="6">
+
+                    <button type="submit" id="submitButton">Login</button>
+                </form>
+
+                <div id="message" class="message"></div>
             </div>
-
-            <label for="password">Password</label>
-            <input id="password" name="password" type="password" autocomplete="current-password" required minlength="6">
-
-            <button type="submit" id="submitButton">Login</button>
-        </form>
-
-        <div id="message" class="message"></div>
+        </section>
     </main>
 
     <script>
@@ -228,6 +342,7 @@
                     return;
                 }
 
+                console.log(data)
                 // Login
                 if (!response.ok) {
                     throw new Error(data.detail || "Authentication failed.");

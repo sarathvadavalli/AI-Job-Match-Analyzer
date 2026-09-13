@@ -13,19 +13,18 @@
             padding: 0;
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #f4f6f8;
-            color: #1f2937;
-        }
+        body { min-height: 100vh; font-family: "Segoe UI", sans-serif; color: #172033; background: #f4f7fb; }
+        header { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 18px clamp(20px, 5vw, 72px); background: #16324f; color: #fff; }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.45); border-radius: 6px; font-weight: 800; }
+        .brand span { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
+        nav { display: flex; gap: 18px; align-items: center; }
+        nav a { color: #dcebf8; font-size: 14px; text-decoration: none; }
 
         .container {
             width: 90%;
             max-width: 600px;
+            margin: 42px auto 64px;
             background: white;
             padding: 40px;
             border-radius: 16px;
@@ -140,6 +139,11 @@
 
 <body>
 
+<header>
+    <div class="brand"><div class="brand-mark">JM</div><span>Job Match Intelligence</span></div>
+    <nav><a href="/dashboard">Dashboard</a><a href="/analysis">Match analysis</a></nav>
+</header>
+
 <div class="container">
 
     <div class="header">
@@ -245,7 +249,7 @@
         try {
 
             const response = await fetch(
-                "http://127.0.0.1:8000/resume/match",
+                "http://127.0.0.1:8000/jd/extract",
                 {
                     method: "POST",
                     body: formData

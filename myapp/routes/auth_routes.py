@@ -63,7 +63,7 @@ def login_user(payload: UserLogin, response: Response):
         {"$set": {"last_login_at": datetime.now(timezone.utc)}},
     )
     
-    token = create_access_token(user["email"])
+    token = create_access_token(user["username"])
     
     response.set_cookie(
         key="access_token",

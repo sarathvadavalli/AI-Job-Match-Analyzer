@@ -1,82 +1,81 @@
 {
-    "match_score": 88,
+    "match_score": 72,
     "skill_analysis": [
         {
-            "skill": "Python",
+            "skill": "Backend Development (Python / Django / FastAPI / Node.js)",
             "level": "strong",
-            "evidence": "Used Python extensively at Safertek IT Solutions for backend automation, database management, and API integrations, as well as across multiple projects."
+            "evidence": "1 year of backend development experience at Safertek IT Solutions using Django, Python, SQLAlchemy, and FastAPI for building web applications and automation tools."
         },
         {
-            "skill": "Django / FastAPI",
+            "skill": "RESTful APIs & Microservices",
             "level": "strong",
-            "evidence": "Developed dynamic data mapping features using Django professionally and built standalone web applications using both Django and FastAPI."
+            "evidence": "Designed CRUD REST APIs using FastAPI, integrated with Bold Reports REST APIs, and tested endpoints using Postman."
         },
         {
-            "skill": "PostgreSQL / MySQL / Database Management",
+            "skill": "Database Design & Query Optimization",
             "level": "strong",
-            "evidence": "Hands-on experience with MySQL, MariaDB, MS SQL Server, and PostgreSQL, including schema migration and hosting MySQL on AWS RDS."
+            "evidence": "Demonstrated expertise in SQL, stored procedures, schema migration (MS SQL Server to MariaDB), query optimization improving performance up to 90%, and working with MongoDB, MySQL, and PostgreSQL."
         },
         {
-            "skill": "REST APIs",
+            "skill": "Frontend Development (HTML, CSS, JavaScript)",
             "level": "hands_on",
-            "evidence": "Integrated Bold Reports REST APIs in industry role and designed CRUD endpoints using FastAPI for a URL shortener service."
+            "evidence": "Listed HTML, CSS, and JS in technical skills and developed web application UIs for OCR and Bus Reservation projects."
         },
         {
-            "skill": "SQL & Query Optimization",
-            "level": "strong",
-            "evidence": "Optimized SQL queries by up to 90% via strategic indexing at Safertek IT Solutions and holds a HackerRank SQL Skill Certificate."
-        },
-        {
-            "skill": "Git",
-            "level": "hands_on",
-            "evidence": "Utilizes Git and GitHub for version control and project hosting across multiple repositories."
-        },
-        {
-            "skill": "System Design",
+            "skill": "Frontend Frameworks (ReactJS)",
             "level": "basic",
-            "evidence": "Applied core backend concepts such as transaction-safe data mapping, handling concurrent requests, and resolving N+1 query issues."
+            "evidence": "ReactJS is listed under technical skills, but practical project evidence primarily highlights Python backend development."
         },
         {
-            "skill": "AWS",
+            "skill": "Version Control (Git / GitHub)",
             "level": "hands_on",
-            "evidence": "Configured and hosted MySQL database on AWS RDS for a deployed web project."
+            "evidence": "Listed Git and GitHub in technical skills and maintained repositories for multiple web projects."
+        },
+        {
+            "skill": "Cloud Platforms (AWS)",
+            "level": "hands_on",
+            "evidence": "Deployed Bus Reservation System on Vercel with MySQL database hosted on AWS RDS."
         },
         {
             "skill": "Docker & CI/CD",
             "level": "basic",
-            "evidence": "Listed Docker and CI/CD tools within technical skills portfolio."
+            "evidence": "Docker and CI/CD listed under candidate technical skills."
         }
     ],
     "missing_skills": [
         {
-            "skill": "Celery",
+            "skill": "TypeScript",
+            "label": "required"
+        },
+        {
+            "skill": "Authentication & Authorization (OAuth2, JWT, SSO)",
+            "label": "required"
+        },
+        {
+            "skill": "State Management Frameworks (Redux / NgRx / Vuex)",
             "label": "optional"
         },
         {
-            "skill": "Redis",
+            "skill": "Automated Testing Frameworks (Jest, Cypress, JUnit)",
             "label": "optional"
         },
         {
-            "skill": "Microservices",
-            "label": "optional"
-        },
-        {
-            "skill": "Message Queues",
+            "skill": "Event-Driven Architecture (Kafka / RabbitMQ)",
             "label": "optional"
         }
     ],
     "feedback": [
         {
             "label": "skills",
-            "description": "Gain practical experience with distributed task queues like Celery and caching layers such as Redis to boost production scalability skills."
+            "description": "Acquire proficiency in TypeScript and standard authentication protocols such as JWT and OAuth2 to satisfy key mandatory full-stack requirements."
         },
         {
             "label": "projects",
-            "description": "Develop a microservices architecture project utilizing message queues to match preferred backend tech stack requirements."
+            "description": "Build end-to-end full-stack applications with a dedicated React frontend integrated with state management tools (like Redux) to showcase frontend framework depth alongside backend expertise."
         },
         {
-            "label": "experience",
-            "description": "Highlight live production deployment, container orchestration with Docker, and CI/CD automation in real-world environments."
+            "label": "skills",
+            "description": "Gain hands-on experience with frontend and backend testing tools (e.g., Jest, Cypress, PyTest) to demonstrate comprehensive software quality practices."
         }
     ]
 }

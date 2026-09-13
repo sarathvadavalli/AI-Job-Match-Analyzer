@@ -7,12 +7,9 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from fastapi import Cookie, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
 
 from myapp.core.config import get_settings
 from myapp.core.db import users_collection
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def hash_password(password: str) -> str:
@@ -128,13 +125,13 @@ def get_current_user(token: str = Cookie(default=None, alias="access_token")) ->
 
     try:
         payload = decode_access_token(token)
-        email = payload.get("sub")
-        if not email:
+        username = payload.get("sub")
+        if not username:
             raise credentials_error
     except ValueError as exc:
         raise credentials_error from exc
 
-    user = users_collection.find_one({"email": email})
+    user = users_collection.find_one({"username": username})
     if not user:
         raise credentials_error
 

@@ -103,7 +103,7 @@ Classify the hyperlinks appropriately.
                 f"Failed to extract resume information: {str(e)}"
             ) from e
 
-    def generate_match_feedback(self, profile: dict, jd: str) -> dict:
+    def generate_match_feedback(self, profile: dict, jd: str) -> MatchResult:
         prompt = f"""
 CANDIDATE'S PROFILE: 
 {profile}
@@ -124,12 +124,11 @@ JOB DESCRIPTION:
 
             extracted_response = response.text   
             res = MatchResult.model_validate_json(response.text)
-            
-            print(res)
+
             with open("output.json", "w", encoding="utf-8") as f:
                 f.write(res.model_dump_json(indent=4))  
             
-            return {}
+            return res
         except Exception as e:
             raise RuntimeError(
                 f"Failed to generate match feedback: {str(e)}"

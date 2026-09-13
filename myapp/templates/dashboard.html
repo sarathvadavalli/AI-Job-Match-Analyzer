@@ -13,20 +13,24 @@
 
         body {
             min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background: #f8fafc;
-            color: #111827;
+            font-family: "Segoe UI", sans-serif;
+            color: #172033;
+            background: #f4f7fb;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 16px;
-            padding: 20px clamp(20px, 6vw, 64px);
-            border-bottom: 1px solid #e5e7eb;
-            background: #ffffff;
+            gap: 20px;
+            padding: 18px clamp(20px, 5vw, 72px);
+            background: #16324f;
+            color: #fff;
         }
+
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.45); border-radius: 6px; font-weight: 800; }
+        .brand span { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
 
         h1 {
             font-size: clamp(24px, 4vw, 36px);
@@ -116,7 +120,7 @@
 </head>
 <body>
     <header>
-        <h1>Dashboard</h1>
+        <div class="brand"><div class="brand-mark">JM</div><span>Job Match Intelligence</span></div>
         <div class="actions">
             <a href="http://127.0.0.1:8000/profile" class="primary">View Profile</a>
             <button type="button" id="logoutButton">Logout</button>
@@ -140,6 +144,12 @@
                 <h2>Resume Extractor</h2>
                 <p>Upload a resume and extract candidate profile details, education, work history, skills, and links.</p>
                 <a href="/upload/resume">Open Resume Extractor</a>
+            </article>
+
+            <article class="tool">
+                <h2>Job Match Analysis</h2>
+                <p>Compare your saved profile with a job description and review strengths, gaps, and next steps.</p>
+                <a href="/analysis">Open Match Analysis</a>
             </article>
         </section>
     </main>
