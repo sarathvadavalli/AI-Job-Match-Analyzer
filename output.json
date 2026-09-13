@@ -1,0 +1,82 @@
+{
+    "match_score": 88,
+    "skill_analysis": [
+        {
+            "skill": "Python",
+            "level": "strong",
+            "evidence": "Used Python extensively at Safertek IT Solutions for backend automation, database management, and API integrations, as well as across multiple projects."
+        },
+        {
+            "skill": "Django / FastAPI",
+            "level": "strong",
+            "evidence": "Developed dynamic data mapping features using Django professionally and built standalone web applications using both Django and FastAPI."
+        },
+        {
+            "skill": "PostgreSQL / MySQL / Database Management",
+            "level": "strong",
+            "evidence": "Hands-on experience with MySQL, MariaDB, MS SQL Server, and PostgreSQL, including schema migration and hosting MySQL on AWS RDS."
+        },
+        {
+            "skill": "REST APIs",
+            "level": "hands_on",
+            "evidence": "Integrated Bold Reports REST APIs in industry role and designed CRUD endpoints using FastAPI for a URL shortener service."
+        },
+        {
+            "skill": "SQL & Query Optimization",
+            "level": "strong",
+            "evidence": "Optimized SQL queries by up to 90% via strategic indexing at Safertek IT Solutions and holds a HackerRank SQL Skill Certificate."
+        },
+        {
+            "skill": "Git",
+            "level": "hands_on",
+            "evidence": "Utilizes Git and GitHub for version control and project hosting across multiple repositories."
+        },
+        {
+            "skill": "System Design",
+            "level": "basic",
+            "evidence": "Applied core backend concepts such as transaction-safe data mapping, handling concurrent requests, and resolving N+1 query issues."
+        },
+        {
+            "skill": "AWS",
+            "level": "hands_on",
+            "evidence": "Configured and hosted MySQL database on AWS RDS for a deployed web project."
+        },
+        {
+            "skill": "Docker & CI/CD",
+            "level": "basic",
+            "evidence": "Listed Docker and CI/CD tools within technical skills portfolio."
+        }
+    ],
+    "missing_skills": [
+        {
+            "skill": "Celery",
+            "label": "optional"
+        },
+        {
+            "skill": "Redis",
+            "label": "optional"
+        },
+        {
+            "skill": "Microservices",
+            "label": "optional"
+        },
+        {
+            "skill": "Message Queues",
+            "label": "optional"
+        }
+    ],
+    "feedback": [
+        {
+            "label": "skills",
+            "description": "Gain practical experience with distributed task queues like Celery and caching layers such as Redis to boost production scalability skills."
+        },
+        {
+            "label": "projects",
+            "description": "Develop a microservices architecture project utilizing message queues to match preferred backend tech stack requirements."
+        },
+        {
+            "label": "experience",
+            "description": "Highlight live production deployment, container orchestration with Docker, and CI/CD automation in real-world environments."
+        }
+    ]
+}

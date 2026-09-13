@@ -37,16 +37,46 @@
     .profile-app .skill-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
     .profile-app .button { cursor: pointer; font-weight: 700; min-height: 40px; border: 1px solid #1d4ed8; border-radius: 6px; padding: 9px 14px; color: #fff; background: #1d4ed8; font-size: 14px; }
     .profile-app .button:hover { background: #1e40af; }
-    /*.profile-app .button.secondary { color: #172033; background: #fff; border-color: #dbe3ee; }
-    .profile-app .button.secondary:hover { background: #f8fafc; }*/
     .profile-app .button:disabled { opacity: .6; cursor: wait; }
     .profile-app .actions { display: flex; justify-content: flex-end; gap: 10px; padding: 18px 24px; border-top: 1px solid #dbe3ee; }
-    .profile-app dialog { width: min(520px, calc(100% - 32px)); border: 0; border-radius: 8px; padding: 0; box-shadow: 0 20px 50px rgba(15, 23, 42, .25); }
-    .profile-app dialog::backdrop { background: rgba(15, 23, 42, .42); }
-    .profile-app .dialog-body { padding: 24px; }
-    .profile-app .dialog-body pre { max-height: 55vh; overflow: auto; padding: 14px; background: #f8fafc; border: 1px solid #dbe3ee; font-size: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
-    .profile-app .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
-    .profile-app .button.success {
+.profile-app dialog {
+  width: min(520px, calc(100% - 32px));
+  border: 0;
+  border-radius: 8px;
+  padding: 0;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .25);
+  
+  /* Enforce exact center alignment on screen */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+}
+
+.profile-app dialog::backdrop {
+  background: rgba(15, 23, 42, .42);
+}
+
+.profile-app .dialog-body {
+  padding: 24px;
+}
+
+.profile-app .dialog-body pre {
+  max-height: 55vh;
+  overflow: auto;
+  padding: 14px;
+  background: #f8fafc;
+  border: 1px solid #dbe3ee;
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.profile-app .dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}    .profile-app .button.success {
         background: #166534;
         border-color: #166534;
         color: #fff;
@@ -201,17 +231,19 @@
             ><button id="confirmButton" class="button" type="button">Edit profile</button>
         </div>
     </section>
-    <dialog id="profileDialog">
-        <div class="dialog-body">
-            <h2>Profile JSON</h2>
-            <p class="hint">This is the data that will be sent to the profile endpoint.</p>
-            <pre id="profileJson"></pre>
-            <div class="dialog-actions">
-                <button id="closeDialog" class="button secondary" type="button">Close</button
-                ><button id="saveDialog" class="button" type="button">Save profile</button>
-            </div>
-        </div>
-    </dialog>
+<div class="profile-app">
+  <dialog id="profileDialog">
+    <div class="dialog-body">
+      <h2>Profile JSON</h2>
+      <p class="hint">This is the data that will be sent to the profile endpoint.</p>
+      <pre id="profileJson"></pre>
+      <div class="dialog-actions">
+        <button id="closeDialog" class="button secondary" type="button">Close</button>
+        <button id="saveDialog" class="button" type="button">Save profile</button>
+      </div>
+    </div>
+  </dialog>
+</div>
 </div>
 
 <script id="profile-data" type="application/json">
@@ -335,8 +367,12 @@
         state.experience = asArray(data.experience).map((item) => ({
             ...item,
             responsibilities: toList(item.responsibilities),
+        })); 
+        state.projects = asArray(data.projects).map((item) => ({ 
+            ...item, 
+            description: toList(item.description),
+            technologies: toList(item.technologies),
         }));
-        state.projects = asArray(data.projects).map((item) => ({ ...item, technologies: toList(item.technologies) }));
         state.certifications = asArray(data.certifications).map((item) => ({ ...item }));
         state.links = [
             ...asArray(data.handles).map((item) => ({
@@ -454,12 +490,12 @@
         applyReadonlyState();
     };
 
-window.removeSkill = function(key, index) {
-    readForm();
-    state[key].splice(index, 1);
-    renderSkills();
-    applyReadonlyState();
-};
+    window.removeSkill = function(key, index) {
+        readForm();
+        state[key].splice(index, 1);
+        renderSkills();
+        applyReadonlyState();
+    };
 
     function renderAll() {
         document
@@ -508,6 +544,8 @@ window.removeSkill = function(key, index) {
                     );
                 if (element.querySelector('[data-field="responsibilities"]'))
                     item.responsibilities = toList(element.querySelector('[data-field="responsibilities"]').value);
+                if (element.querySelector('[data-field="description"]'))
+                    item.description = toList(element.querySelector('[data-field="description"]').value);
                 if (element.querySelector('[data-field="technologies"]'))
                     item.technologies = toList(element.querySelector('[data-field="technologies"]').value);
             });
@@ -656,7 +694,6 @@ $("#confirmButton").addEventListener("click", () => {
         readForm();
         if (!validateProfile()) return;
         isEditing = false;
-
         const payload = readForm();
         $("#profileJson").textContent = JSON.stringify(payload, null, 2);
         $("#profileDialog").showModal();
@@ -689,7 +726,16 @@ $("#confirmButton").addEventListener("click", () => {
             const data = await response.json();
             $("#profileDialog").close();
             if (!response.ok) throw new Error(data.detail || "Could not save profile.");
-            //$("#profileDialog").close();
+            isEditing = false;
+            if (confirmBtn) {
+                confirmBtn.textContent = "Edit profile";
+                confirmBtn.classList.remove("success");
+                confirmBtn.classList.add("secondary");
+            }
+            if (clearBtn) {
+                clearBtn.style.display = "none";
+            }
+            renderAll();
             showStatus("Profile saved successfully.", "success");
         } catch (error) {
             showStatus(error.message, "error");

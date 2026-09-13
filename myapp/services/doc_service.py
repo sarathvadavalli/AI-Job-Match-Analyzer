@@ -104,8 +104,6 @@ class DocumentService:
 
         text = "\n".join(paragraphs).strip()
         links = list(dict.fromkeys(links))
-        print(text)
-        print(links)
         return ResumeExtractionInput(text=text, links=links)
 
     def _extract_txt(self, content: bytes) -> ResumeExtractionInput:

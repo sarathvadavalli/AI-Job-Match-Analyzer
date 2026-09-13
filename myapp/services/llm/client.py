@@ -1,3 +1,4 @@
+import json
 import os
 
 from dotenv import load_dotenv
@@ -8,7 +9,12 @@ from openai import OpenAI
 from myapp.schemas.job_extraction import JobExtraction
 from myapp.schemas.resume_extraction import ResumeProfile
 from myapp.schemas.resume_extraction import ResumeExtractionInput
-from myapp.services.llm.context import JD_SYSTEM_PROMPT, RESUME_SYSTEM_PROMPT
+from myapp.schemas.job_match_result import MatchResult
+from myapp.services.llm.context import (
+    JD_SYSTEM_PROMPT,
+    MATCH_SYSTEM_PROMPT,
+    RESUME_SYSTEM_PROMPT,
+)
 
 load_dotenv()
 
@@ -16,18 +22,18 @@ class LLMClient:
 
     def __init__(self):
         gemini_api_key = os.getenv("GEMINI_API_KEY")
-        # grok_api_key = os.getenv("GROK_API_KEY")
+        # openrouter_api_key = os.environ.get("OPENROUTER_API_KEY"),
 
         if not gemini_api_key:
             raise ValueError(
                 "API_KEY not found in environment variables."
             )
 
-        # self.client = genai.Client(api_key=gemini_api_key)
-        self.client = OpenAI(
-            api_key=os.environ.get("OPENROUTER_API_KEY"),
-            base_url="https://openrouter.ai/api/v1",
-        )
+        self.client = genai.Client(api_key=gemini_api_key)
+        # self.client = OpenAI(
+        #     api_key=openrouter_api_key,
+        #     base_url="https://openrouter.ai/api/v1",
+        # )
 
     def extract_job_info(self, description: str) -> JobExtraction:
         try:
@@ -65,33 +71,66 @@ Classify the hyperlinks appropriately.
 
         try:
             print("Extracting resume information...")
-            # response = self.client.models.generate_content(
-            #     model="gemini-3.6-flash",
-            #     contents=prompt,
-            #     config=types.GenerateContentConfig(
-            #         system_instruction=RESUME_SYSTEM_PROMPT,
-            #         response_mime_type="application/json",
-            #         response_schema=ResumeProfile,
-            #         temperature=0.1,
-            #     ),
-            # )
-
-            response = self.client.beta.chat.completions.parse(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": RESUME_SYSTEM_PROMPT},
-                    {"role": "user", "content": prompt},
-                ],
-                response_format=ResumeProfile,
-                temperature=0.1,
+            response = self.client.models.generate_content(
+                model="gemini-3.6-flash",
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=RESUME_SYSTEM_PROMPT,
+                    response_mime_type="application/json",
+                    response_schema=ResumeProfile,
+                    temperature=0.1,
+                ),
             )
+
+            # response = self.client.beta.chat.completions.parse(
+            #     model="gpt-4o-mini",
+            #     messages=[
+            #         {"role": "system", "content": RESUME_SYSTEM_PROMPT},
+            #         {"role": "user", "content": prompt},
+            #     ],
+            #     response_format=ResumeProfile,
+            #     temperature=0.1,
+            # )
  
-            res: ResumeProfile = response.choices[0].message.parsed
-            print("Raw Extraction Response:")
-            print(res)
+            # res: ResumeProfile = response.choices[0].message.parsed
+            res = ResumeProfile.model_validate_json(response.text)
+            # print("Raw Extraction Response:")
+            # print(res)
             return res
 
         except Exception as e:
             raise RuntimeError(
                 f"Failed to extract resume information: {str(e)}"
+            ) from e
+
+    def generate_match_feedback(self, profile: dict, jd: str) -> dict:
+        prompt = f"""
+CANDIDATE'S PROFILE: 
+{profile}
+JOB DESCRIPTION:
+{jd}
+"""
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-3.6-flash",
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=MATCH_SYSTEM_PROMPT,
+                    response_mime_type="application/json",
+                    response_schema=MatchResult,
+                    temperature=0.2,
+                ),
+            )
+
+            extracted_response = response.text   
+            res = MatchResult.model_validate_json(response.text)
+            
+            print(res)
+            with open("output.json", "w", encoding="utf-8") as f:
+                f.write(res.model_dump_json(indent=4))  
+            
+            return {}
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to generate match feedback: {str(e)}"
             ) from e
