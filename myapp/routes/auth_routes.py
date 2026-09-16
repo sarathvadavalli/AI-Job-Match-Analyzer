@@ -74,7 +74,7 @@ def login_user(payload: UserLogin, response: Response):
         max_age= 60*60
     )
 
-    return {"message": "Login successful"}
+    return {"message": "Authentication successful"}
 
 
 @router.post("/logout", response_model=MessageResponse)

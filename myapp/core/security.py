@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from fastapi import Cookie, Depends, HTTPException, status
+from fastapi.responses import RedirectResponse
 
 from myapp.core.config import get_settings
 from myapp.core.db import users_collection
@@ -110,29 +111,17 @@ def decode_access_token(token: str) -> dict[str, Any]:
 
 
 def get_current_user(token: str = Cookie(default=None, alias="access_token")) -> dict[str, Any]:
-    credentials_error = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials.",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
     if token is None:
-        raise HTTPException(
-            status_code=status.HTTP_303_SEE_OTHER,
-            detail="Authentication required.",
-            headers={"Location": "/login"},
-        )
+        raise HTTPException(status_code=401, detail="Not authenticated")
 
     try:
         payload = decode_access_token(token)
-        username = payload.get("sub")
-        if not username:
-            raise credentials_error
-    except ValueError as exc:
-        raise credentials_error from exc
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
 
+    username = payload.get("sub")
     user = users_collection.find_one({"username": username})
     if not user:
-        raise credentials_error
+        raise HTTPException(status_code=401, detail="User not found")
 
     return user

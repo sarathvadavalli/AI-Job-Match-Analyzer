@@ -19,11 +19,16 @@ def index():
 
 @router.get("/login")
 def login_page(request: Request):
-    return templates.TemplateResponse(
-        request,
-        name="login.html",
-        context={"request": request}
+    error = request.cookies.get("flash_error", "")
+    response = templates.TemplateResponse(
+        request, 
+        "login.html", 
+        context={"error": error}
     )
+    if error != "":
+        response.delete_cookie("flash_error")
+
+    return response
 
 
 @router.get("/dashboard")
