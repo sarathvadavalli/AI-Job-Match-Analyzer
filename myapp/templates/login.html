@@ -177,8 +177,7 @@
             font-weight: 700;
         }
 
-        .message {
-            display: none;
+        .message {           
             margin-top: 16px;
             padding: 12px;
             border-radius: 6px;
@@ -215,7 +214,7 @@
         }
     </style>
 </head>
-<body>
+<body id="content-container">
     <header>
         <div class="brand"><div class="brand-mark">JM</div><span>Job Match Intelligence</span></div>
     </header>
@@ -233,7 +232,6 @@
 
         <section class="auth-column">
             <div class="auth-panel">
-                <h2>JD Extractor</h2>
                 <p class="subtitle">Sign in to continue to your dashboard.</p>
 
                 <div class="tabs" role="tablist">
@@ -278,7 +276,13 @@
         const passwordInput = document.getElementById("password");
         const submitButton = document.getElementById("submitButton");
         const message = document.getElementById("message");
+        const error = "{{ error }}";
         let mode = "login";
+
+        if(error){
+            message.textContent = `Please login to continue.`;
+            message.className = "message error";
+        }
 
         function setMode(nextMode) {
             mode = nextMode;
@@ -320,7 +324,7 @@
             }
 
             try {
-                const response = await fetch(`http://127.0.0.1:8000/auth/${mode}`, {
+                const response = await fetch(`/auth/${mode}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -342,15 +346,14 @@
                     return;
                 }
 
-                console.log(data)
                 // Login
                 if (!response.ok) {
                     throw new Error(data.detail || "Authentication failed.");
                 }
 
-                message.textContent = `${data.message}. Opening dashboard...`;
+                message.textContent = `${data.message}. Attempting to open dashboard...`;
                 message.className = "message success";
-                window.location.replace("http://127.0.0.1:8000/dashboard")
+                window.location.replace('/dashboard')
 
             } catch (error) {
                 message.textContent = error.message;

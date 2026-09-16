@@ -122,7 +122,7 @@
     <header>
         <div class="brand"><div class="brand-mark">JM</div><span>Job Match Intelligence</span></div>
         <div class="actions">
-            <a href="http://127.0.0.1:8000/profile" class="primary">View Profile</a>
+            <a href="/profile" class="primary">View Profile</a>
             <button type="button" id="logoutButton">Logout</button>
         </div>
     </header>
@@ -159,7 +159,7 @@
 
         logoutButton.addEventListener("click", async (event) => {
             event.preventDefault();
-            const response = await fetch('http://127.0.0.1:8000/auth/logout',  {method: "POST"});
+            const response = await fetch('/auth/logout',  {method: "POST"});
             data = response.json();
             console.log(data.message)
             window.location.replace("/login");
