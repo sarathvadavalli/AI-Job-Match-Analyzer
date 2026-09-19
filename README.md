@@ -4,7 +4,7 @@ AI-powered resume and job-description analysis for faster, evidence-based applic
 
 The application extracts structured candidate data, compares it with a job description, and returns a practical match report.
 
-## What It Does
+## Features
 
 - **Authentication**: Authenticates the user with JWT technique by storing in a HttpOnly cookie.
 - **Profile management**: Upload a resume and autofill the input fields of profile. Review and edit extracted information before saving.
@@ -166,6 +166,11 @@ python -m tests.test_extraction
 ```
 
 The extraction test workflow uses the cases in `tests/testcases.json` and writes results to `tests/results.json`.
+
+## Improvements
+
+- Developing an algorithm that could evaluate match score deterministically based on the weights of each skill representing its importance in job description.
+- Creating an agentic workflow that could autonomously fetch job descriptions from job portals, calculate match scores and display the most relevant jobs that are suitable for a candidate.
 
 ## License
 This project is licensed under the MIT License.
