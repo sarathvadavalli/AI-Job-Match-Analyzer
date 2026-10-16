@@ -47,12 +47,16 @@ The application extracts structured candidate data, compares it with a job descr
 ```bash
 git clone <repository-url>
 cd JD_Extractor
+```
+
+Create a virtual environment:
+```bash
 python -m venv .venv
 ```
 
 Activate the virtual environment:
 
-```powershell
+```bash
 # Windows PowerShell
 .venv\Scripts\Activate.ps1
 ```
@@ -157,6 +161,13 @@ JD_Extractor/
 └── README.md
 ```
 
+## Packaging
+
+- Use the Docker runtime to install the Tesseract system executable alongside the Python dependencies. The included `Dockerfile` installs Tesseract with English
+language data and starts Uvicorn on Render's PORT.
+
+- The container sets `TESSERACT_CMD=/usr/bin/tesseract`. Remove any existing render environment override that points to a local Windows installation
+
 ## Testing
 
 Run the automated test suite with:
@@ -173,4 +184,5 @@ The extraction test workflow uses the cases in `tests/testcases.json` and writes
 - Creating an agentic workflow that could autonomously fetch job descriptions from job portals, calculate match scores and display the most relevant jobs that are suitable for a candidate.
 
 ## License
+
 This project is licensed under the MIT License.
