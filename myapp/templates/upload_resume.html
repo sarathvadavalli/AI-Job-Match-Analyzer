@@ -235,6 +235,10 @@
             alert("Please upload a file");
             return;
         }
+        if (file.size > 4 * 1024 * 1024) {
+            alert("Upload a document smaller than 4 MiB.");
+            return;
+        }
 
         const formData = new FormData();
 
@@ -261,7 +265,7 @@
             const errorMessage = document.getElementById("errorMessage");
 
             if (!response.ok) {
-                errorMessage.textContent = data.detail.FormData || "An error occurred while extracting resume information.";
+                errorMessage.textContent = data.detail || "An error occurred while extracting resume information.";
                 errorMessage.style.display = "block";
                 return;
             }

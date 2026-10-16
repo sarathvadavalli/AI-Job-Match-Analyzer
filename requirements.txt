@@ -6,9 +6,5 @@ pydantic[email]>=2,<3
 pymongo
 python-dotenv
 openai
-google-genai
 PyMuPDF>=1.24.3
 python-docx
-pytesseract
-Pillow
-alembic

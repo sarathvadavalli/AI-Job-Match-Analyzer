@@ -1,22 +1,18 @@
 from io import BytesIO
-import os
 import pymupdf
 from docx import Document
-from pathlib import Path
-from dotenv import load_dotenv
-import pytesseract
-from PIL import Image
+from zipfile import ZipFile, BadZipFile
 
 from myapp.schemas.resume_extraction import ResumeExtractionInput
 import logging
+from myapp.services.llm.client import LLMClient
 
 logger = logging.getLogger()
 
-load_dotenv()
-
-# pytesseract.pytesseract.tesseract_cmd = (
-#     r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-# )
+MAX_UPLOAD_BYTES = 4 * 1024 * 1024
+MAX_DOCUMENT_CHARS = 100_000
+MAX_PDF_PAGES = 20
+MAX_OCR_PAGES = 5
 
 class DocumentService:
 
@@ -24,81 +20,83 @@ class DocumentService:
         self.file_type = file_type
  
     def extract_text(self, file_name: str, content: bytes) -> ResumeExtractionInput:
+        if not content:
+            raise ValueError("The uploaded file is empty.")
+        if len(content) > MAX_UPLOAD_BYTES:
+            raise ValueError("Upload a document smaller than 4 MiB.")
         extension = file_name.lower().split(".")[-1]
 
         if extension == "pdf":
-            print("Extracting PDF content...")
-            # text = self._extract_pdf(content)
+            result = self._extract_pdf(content)
 
-            # logger.info(text)
-            # if not text:
-            text = self._extract_pdf_ocr(content)
-            
-            return ResumeExtractionInput(text=text, links=[])
+        elif extension == "docx":
+            result = self._extract_docx(content)
 
-        if extension == "docx":
-            return self._extract_docx(content)
+        elif extension == "txt":
+            result = self._extract_txt(content)
+        else:
+            raise ValueError("Unsupported file type")
 
-        if extension == "txt":
-            return self._extract_txt(content)
+        if not result.text.strip():
+            raise ValueError("No readable text was found in the document.")
+        if len(result.text) > MAX_DOCUMENT_CHARS:
+            raise ValueError("Document is too long. Upload at most 100,000 characters.")
+        return result
 
-        raise ValueError("Unsupported file type")
-
-    def _extract_pdf(self, content: bytes) -> str:
+    def _extract_pdf(self, content: bytes) -> ResumeExtractionInput:
         text = []
+        links = []
 
         try:
             with pymupdf.open(stream=content, filetype="pdf") as document:
+                if document.needs_pass:
+                    raise ValueError("Upload an unencrypted PDF.")
+                if len(document) > MAX_PDF_PAGES:
+                    raise ValueError("Upload a PDF with at most 20 pages.")
+                scanned_pages = [page.number for page in document if not page.get_text().strip()]
+                if len(scanned_pages) > MAX_OCR_PAGES:
+                    raise ValueError("Upload a PDF with at most 5 scanned pages.")
                 for page in document:
-                    page_text = page.get_text()
-
-                    links = "\n".join(
+                    page_text = page.get_text().strip()
+                    if page.number in scanned_pages:
+                        page_text = self._extract_page_ocr(page)
+                    page_links = [
                         link["uri"]
                         for link in page.get_links()
                         if "uri" in link
-                    )
+                    ]
+                    links.extend(page_links)
+                    text.append("\n".join([page_text, *page_links]))
+                    if sum(map(len, text)) > MAX_DOCUMENT_CHARS:
+                        raise ValueError("Document is too long. Upload at most 100,000 characters.")
 
-                    text.append(page_text + "\n" + links)
+            return ResumeExtractionInput(text="\n".join(text).strip(), links=list(dict.fromkeys(links)))
+        except (pymupdf.FileDataError, pymupdf.EmptyFileError, pymupdf.mupdf.FzErrorBase) as exc:
+            raise ValueError("Unable to read this PDF. Upload a valid PDF file.") from exc
 
-            return "\n".join(text).strip()
+    def _extract_page_ocr(self, page) -> str:
+        """Render one bounded image; recognition runs remotely through OpenRouter."""
+        longest_side = max(page.rect.width, page.rect.height)
+        if longest_side <= 0:
+            raise ValueError("The PDF contains a page with invalid dimensions.")
+        scale = min(150 / 72, 1600 / longest_side)
+        pixmap = page.get_pixmap(matrix=pymupdf.Matrix(scale, scale), colorspace=pymupdf.csGRAY, alpha=False)
+        image_bytes = pixmap.tobytes("png")
+        del pixmap
+        try:
+            return LLMClient().extract_image_text(image_bytes)
         except Exception as e:
-            raise RuntimeError(
-                f"Failed to process resume description: {str(e)}"
-            ) from e
-
-
-    def _extract_pdf_ocr(self, content: bytes) -> str:
-        text = []
-
-        try: 
-            with pymupdf.open(stream=content, filetype="pdf") as document:
-                logger.info("Rendering each page as image")
-                for page in document:
-                    # Render PDF page as an image
-                    pixmap = page.get_pixmap(dpi=300)
-
-                    # Convert pixmap to bytes
-                    image_bytes = pixmap.tobytes("png")
-
-                    # Convert bytes to PIL Image
-                    image = Image.open(BytesIO(image_bytes))
-
-                    # Run OCR
-                    page_text = pytesseract.image_to_string(image)
-
-                    if page_text.strip():
-                        text.append(page_text.strip())
-                        logger.info(text)
-
-            return "\n".join(text).strip()
-        except Exception as e:
-            logger.exception("Failed to extract text using OCR")
-            raise RuntimeError(
-                f"Failed to process resume description: {str(e)}"
-            ) from e
+            logger.exception("External OCR failed")
+            raise RuntimeError("Scanned PDF recognition failed. Try again or upload a text-based PDF.") from e
 
 
     def _extract_docx(self, content: bytes) -> ResumeExtractionInput:
+        try:
+            with ZipFile(BytesIO(content)) as archive:
+                if sum(entry.file_size for entry in archive.infolist()) > 20 * 1024 * 1024:
+                    raise ValueError("DOCX content is too large after decompression.")
+        except BadZipFile as exc:
+            raise ValueError("Upload a valid DOCX file.") from exc
         document = Document(BytesIO(content))
 
         paragraphs = [
@@ -109,9 +107,6 @@ class DocumentService:
 
         links = []
         for paragraph in document.paragraphs:
-            if paragraph.text.strip():
-                paragraphs.append(paragraph.text)
-                
             if self.file_type == "resume":
                 for hyperlink in paragraph._p.xpath(".//w:hyperlink"):
                     rel_id = hyperlink.get(
@@ -129,7 +124,10 @@ class DocumentService:
         return ResumeExtractionInput(text=text, links=links)
 
     def _extract_txt(self, content: bytes) -> ResumeExtractionInput:
-        return ResumeExtractionInput(text=content.decode("utf-8").strip(), links=[])
+        try:
+            return ResumeExtractionInput(text=content.decode("utf-8-sig").strip(), links=[])
+        except UnicodeDecodeError as exc:
+            raise ValueError("TXT documents must use UTF-8 encoding.") from exc
 
 
 # try:

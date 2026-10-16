@@ -646,6 +646,10 @@
             showStatus("Select a resume first.", "error");
             return;
         }
+        if (file.size > 4 * 1024 * 1024) {
+            showStatus("Upload a document smaller than 4 MiB.", "error");
+            return;
+        }
         const formData = new FormData();
         formData.append("file", file);
         const button = $("#analyzeButton");
@@ -661,7 +665,7 @@
             normalizeProfile(data);
             showStatus("Resume analyzed and fields autofilled.", "success");
         } catch (error) {
-            showStatus("Failed to process resume due to server error", "error");
+            showStatus(error.message, "error");
         } finally {
             button.disabled = false;
             button.textContent = "Analyze and autofill";

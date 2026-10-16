@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, Depends, Body, HTTPException, status
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
+from pathlib import Path
 
 from pymongo.errors import DuplicateKeyError
 
@@ -8,7 +9,7 @@ from myapp.core.db import users_collection, profiles_collection
 from myapp.core.security import get_current_user
 from myapp.schemas.resume_extraction import ProfileResponse
 
-templates = Jinja2Templates(directory="myapp/templates")
+templates = Jinja2Templates(directory=str(Path(__file__).resolve().parents[1] / "templates"))
 router = APIRouter(tags=["Pages"])
 
 

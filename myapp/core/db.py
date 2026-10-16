@@ -5,7 +5,16 @@ from myapp.core.config import get_settings
 
 settings = get_settings()
 
-client = MongoClient(settings.mongodb_uri)
+client = MongoClient(
+    settings.mongodb_uri,
+    connect=False,
+    maxPoolSize=5,
+    minPoolSize=0,
+    maxIdleTimeMS=60_000,
+    serverSelectionTimeoutMS=settings.mongodb_timeout_ms,
+    connectTimeoutMS=settings.mongodb_timeout_ms,
+    socketTimeoutMS=10_000,
+)
 database = client[settings.mongodb_database]
 users_collection = database["users"]
 profiles_collection = database["profiles"]
@@ -25,9 +34,9 @@ def init_db() -> None:
     )
 
     profiles_collection.create_index(
-        [("userid", ASCENDING)],
+        [("user_id", ASCENDING)],
         unique=True,
-        name="unique_username",
+        name="unique_profile_user_id",
     )
 
 
