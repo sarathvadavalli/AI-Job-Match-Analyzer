@@ -28,10 +28,11 @@ class DocumentService:
 
         if extension == "pdf":
             print("Extracting PDF content...")
-            text = self._extract_pdf(content)
+            # text = self._extract_pdf(content)
 
-            if not text:
-                text = self._extract_pdf_ocr(content)
+            # logger.info(text)
+            # if not text:
+            text = self._extract_pdf_ocr(content)
             
             return ResumeExtractionInput(text=text, links=[])
 
