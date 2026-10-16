@@ -11,6 +11,9 @@ from myapp.schemas.job_response import JobRequest, JobResponse
 from myapp.schemas.resume_extraction import ResumeProfile
 from myapp.schemas.job_match_result import MatchResult
 
+import logging
+logger = logging.getLogger()
+
 router = APIRouter()
 
 @router.post("/jd/extract", response_model=JobResponse)
@@ -40,7 +43,7 @@ async def extract_job_info(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/resume/extract", response_model=ResumeProfile)
+@router.post("/resume/extract")
 async def extract_resume_info(file: UploadFile = File(...)):
     file_name = file.filename
     extension = file_name.lower().split(".")[-1]
@@ -56,14 +59,15 @@ async def extract_resume_info(file: UploadFile = File(...)):
         doc_service = DocumentService(file_type="resume")
         description = doc_service.extract_text(file_name, content)
 
-        resume_service = ResumeService()
-        result = resume_service.extract_resume_info(description)
+        logger.info(description)
+        # resume_service = ResumeService()
+        # result = resume_service.extract_resume_info(description)
 
-        if isinstance(result, str) and result.startswith("Error:"):
-            raise HTTPException(status_code=502, detail=result)
+        # if isinstance(result, str) and result.startswith("Error:"):
+        #     raise HTTPException(status_code=502, detail=result)
 
-        profile = result.model_dump(mode="json")
-        return profile
+        # profile = result.model_dump(mode="json")
+        return {}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
