@@ -8,9 +8,15 @@ import pytesseract
 from PIL import Image
 
 from myapp.schemas.resume_extraction import ResumeExtractionInput
+import logging
+
+logger = logging.getLogger()
 
 load_dotenv()
-# pytesseract.pytesseract.tesseract_cmd = "tesseract"
+
+# pytesseract.pytesseract.tesseract_cmd = (
+#     r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# )
 
 class DocumentService:
 
@@ -84,6 +90,7 @@ class DocumentService:
 
             return "\n".join(text).strip()
         except Exception as e:
+            logger.exception("Failed to extract text using OCR")
             raise RuntimeError(
                 f"Failed to process resume description: {str(e)}"
             ) from e
