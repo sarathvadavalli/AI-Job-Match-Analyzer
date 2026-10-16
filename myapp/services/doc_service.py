@@ -72,8 +72,8 @@ class DocumentService:
 
         try: 
             with pymupdf.open(stream=content, filetype="pdf") as document:
+                logger.info("Rendering each page as image")
                 for page in document:
-
                     # Render PDF page as an image
                     pixmap = page.get_pixmap(dpi=300)
 
@@ -88,6 +88,7 @@ class DocumentService:
 
                     if page_text.strip():
                         text.append(page_text.strip())
+                        logger.info(text)
 
             return "\n".join(text).strip()
         except Exception as e:
