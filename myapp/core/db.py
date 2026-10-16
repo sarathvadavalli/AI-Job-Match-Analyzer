@@ -4,6 +4,7 @@ from myapp.core.config import get_settings
 
 
 settings = get_settings()
+
 client = MongoClient(settings.mongodb_uri)
 database = client[settings.mongodb_database]
 users_collection = database["users"]

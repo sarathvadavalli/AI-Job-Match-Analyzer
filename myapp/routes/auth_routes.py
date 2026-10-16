@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import Response
@@ -16,15 +17,33 @@ from myapp.schemas.auth import TokenResponse, MessageResponse, UserCreate, UserL
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
+logger = logging.getLogger()
 
 @router.post("/register", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
 def register_user(payload: UserCreate):
     now = datetime.now(timezone.utc)
 
+    username = payload.username.strip()
+    email = payload.email.strip().lower()
+
+    existing_user = users_collection.find_one({
+        "$or": [
+            {"username": username},
+            {"email": email}
+        ]
+    })
+
+    if existing_user:
+        if existing_user['username'] == username:
+            raise HTTPException(409, "Username already exists")
+
+        if existing_user['email'] == email:
+            raise HTTPException(409, "Email already exists")
+
     user = {
         "name": payload.name.strip(),
-        "username": payload.username.lower(),
-        "email": payload.email.lower(),
+        "username": username,
+        "email": email,
         "password_hash": hash_password(payload.password),
         "created_at": now,
         "last_login_at": None,

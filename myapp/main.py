@@ -7,6 +7,14 @@ from myapp.core.db import close_db, init_db
 from myapp.routes.page_routes import router as pages_router
 from myapp.routes.document_routes import router as documents_router
 
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s:\t  %(message)s",  # <--- Note the \t here
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+
 app = FastAPI(title="JD Extractor")
 
 app.add_middleware(

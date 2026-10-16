@@ -1,9 +1,7 @@
-import json
+import logging
 import os
 
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
 from openai import OpenAI
 
 from myapp.schemas.job_extraction import JobExtraction
@@ -18,46 +16,46 @@ from myapp.services.llm.context import (
 
 load_dotenv()
 
+logger = logging.getLogger()
+
+
 class LLMClient:
 
     def __init__(self):
-        gemini_api_key = os.getenv("GEMINI_API_KEY")
-        # openrouter_api_key = os.environ.get("OPENROUTER_API_KEY"),
+        openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
 
-        if not gemini_api_key:
-            raise ValueError(
-                "API_KEY not found in environment variables."
-            )
+        if not openrouter_api_key:
+            raise ValueError("OPENROUTER_API_KEY not found in environment variables.")
 
-        self.client = genai.Client(api_key=gemini_api_key)
-        # self.client = OpenAI(
-        #     api_key=openrouter_api_key,
-        #     base_url="https://openrouter.ai/api/v1",
-        # )
+        self.client = OpenAI(
+            api_key=openrouter_api_key,
+            base_url="https://openrouter.ai/api/v1",
+        )
 
     def extract_job_info(self, description: str) -> JobExtraction:
         try:
-            response = self.client.models.generate_content(
-                model="gemini-3.6-flash",
-                contents=description,
-                config=types.GenerateContentConfig(
-                    system_instruction=JD_SYSTEM_PROMPT,
-                    response_mime_type="application/json",
-                    response_schema=JobExtraction,
-                    temperature=0.1,
-                ),
+            logger.info("Sending job extraction request to OpenRouter.")
+            response = self.client.beta.chat.completions.parse(
+                model="openai/gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": JD_SYSTEM_PROMPT},
+                    {"role": "user", "content": description},
+                ],
+                response_format=JobExtraction,
+                temperature=0.1,
             )
+            res = response.choices[0].message.parsed
+            if res is None:
+                raise ValueError("OpenRouter returned no parsed job extraction.")
 
-            res = JobExtraction.model_validate_json(response.text)
-            # print("Validated Extraction:")
-            # print(res)
+            logger.info("Received parsed job extraction from OpenRouter.")
             return res
 
         except Exception as e:
+            logger.exception("Job extraction request failed.")
             raise RuntimeError(
                 f"Failed to extract job information: {str(e)}"
             ) from e
-
 
     def extract_resume_info(self, description: ResumeExtractionInput) -> ResumeProfile:
         prompt = f"""
@@ -70,35 +68,26 @@ Classify the hyperlinks appropriately.
 """
 
         try:
-            print("Extracting resume information...")
-            response = self.client.models.generate_content(
-                model="gemini-3.6-flash",
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=RESUME_SYSTEM_PROMPT,
-                    response_mime_type="application/json",
-                    response_schema=ResumeProfile,
-                    temperature=0.1,
-                ),
+            logger.info("Sending resume extraction request to OpenRouter.")
+            response = self.client.beta.chat.completions.parse(
+                model="openai/gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": RESUME_SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
+                response_format=ResumeProfile,
+                temperature=0.1,
             )
 
-            # response = self.client.beta.chat.completions.parse(
-            #     model="gpt-4o-mini",
-            #     messages=[
-            #         {"role": "system", "content": RESUME_SYSTEM_PROMPT},
-            #         {"role": "user", "content": prompt},
-            #     ],
-            #     response_format=ResumeProfile,
-            #     temperature=0.1,
-            # )
- 
-            # res: ResumeProfile = response.choices[0].message.parsed
-            res = ResumeProfile.model_validate_json(response.text)
-            # print("Raw Extraction Response:")
-            # print(res)
+            res = response.choices[0].message.parsed
+            if res is None:
+                raise ValueError("OpenRouter returned no parsed resume profile.")
+
+            logger.info("Received parsed resume profile from OpenRouter.")
             return res
 
         except Exception as e:
+            logger.exception("Resume extraction request failed.")
             raise RuntimeError(
                 f"Failed to extract resume information: {str(e)}"
             ) from e
@@ -111,25 +100,28 @@ JOB DESCRIPTION:
 {jd}
 """
         try:
-            response = self.client.models.generate_content(
-                model="gemini-3.6-flash",
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=MATCH_SYSTEM_PROMPT,
-                    response_mime_type="application/json",
-                    response_schema=MatchResult,
-                    temperature=0.2,
-                ),
+            logger.info("Sending resume match request to OpenRouter.")
+            response = self.client.beta.chat.completions.parse(
+                model="openai/gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": MATCH_SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
+                response_format=MatchResult,
+                temperature=0.2,
             )
 
-            extracted_response = response.text   
-            res = MatchResult.model_validate_json(response.text)
+            res = response.choices[0].message.parsed
+            if res is None:
+                raise ValueError("OpenRouter returned no parsed match result.")
+            logger.info("Received parsed resume match result from OpenRouter.")
 
             with open("output.json", "w", encoding="utf-8") as f:
-                f.write(res.model_dump_json(indent=4))  
-            
+                f.write(res.model_dump_json(indent=4))
+
             return res
         except Exception as e:
+            logger.exception("Resume match request failed.")
             raise RuntimeError(
                 f"Failed to generate match feedback: {str(e)}"
             ) from e

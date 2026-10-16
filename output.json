@@ -1,45 +1,65 @@
 {
-    "match_score": 92,
+    "match_score": 80,
     "skill_analysis": [
         {
-            "skill": "Python",
+            "skill": "Python programming",
             "level": "strong",
-            "evidence": "Listed under technical skills, backed by Infosys Springboard certification, used extensively in work experience at Safertek IT Solutions and in multiple projects (Bus Reservation System, VisiOCR, URL Shortener)."
+            "evidence": "1 year of experience in backend development, Python automation, and multiple projects using Python."
         },
         {
-            "skill": "Django",
+            "skill": "Backend development",
             "level": "strong",
-            "evidence": "Coursera (IBM) certified in Django Application Development. Used Django at Safertek IT Solutions for data mapping, and built multiple full-stack projects using Django (Bus Reservation System, VisiOCR System)."
+            "evidence": "1 year of experience as a Backend Developer Intern and Implementation Developer, with responsibilities including developing features using Django."
         },
         {
-            "skill": "MySQL",
+            "skill": "REST API skills",
             "level": "strong",
-            "evidence": "HackerRank SQL certified. Used MySQL in projects like Bus Reservation System and VisiOCR System, along with extensive relational database experience at Safertek IT Solutions (MS SQL Server, MariaDB, SQL query optimization)."
+            "evidence": "Developed RESTful backend services for the AI Job Match Analyzer project and interacted with REST APIs in professional experience."
         },
         {
-            "skill": "Java",
+            "skill": "SQL and relational databases",
+            "level": "strong",
+            "evidence": "Implemented SQL stored procedures and optimized SQL queries in professional experience."
+        },
+        {
+            "skill": "FastAPI, Flask, or Django",
+            "level": "strong",
+            "evidence": "Experience with Django in professional roles and FastAPI in personal projects."
+        },
+        {
+            "skill": "Microservices and distributed systems",
             "level": "basic",
-            "evidence": "Listed in technical skills with CSE degree coursework background, though primary project and work evidence is centered on Python."
+            "evidence": "No explicit experience mentioned, but familiarity can be inferred from project work."
+        },
+        {
+            "skill": "Git, Docker, and CI/CD",
+            "level": "basic",
+            "evidence": "No explicit experience mentioned in the profile."
+        },
+        {
+            "skill": "Debugging and problem-solving skills",
+            "level": "strong",
+            "evidence": "Used Linux command-line tools to analyze production logs and improve application performance."
         }
     ],
     "missing_skills": [
         {
-            "skill": "Flask",
+            "skill": "Microservices and distributed systems",
             "label": "optional"
         },
         {
-            "skill": "MongoDB",
+            "skill": "Git, Docker, and CI/CD",
             "label": "optional"
         }
     ],
     "feedback": [
         {
-            "label": "experience",
-            "description": "Transition from internship/contract implementation roles into dedicated full-time backend software development roles to strengthen practical industry experience."
+            "label": "skills",
+            "description": "Gain experience with Git, Docker, and CI/CD tools to enhance backend development capabilities."
         },
         {
-            "label": "projects",
-            "description": "Add details on production monitoring, CI/CD pipelines, and scalability metrics for Django and MySQL backend deployments."
+            "label": "experience",
+            "description": "Consider working on projects involving microservices to strengthen understanding and experience in distributed systems."
         }
     ]
 }
