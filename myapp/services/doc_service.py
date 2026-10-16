@@ -1,15 +1,16 @@
 from io import BytesIO
-import fitz
+import os
+import pymupdf
 from docx import Document
 from pathlib import Path
+from dotenv import load_dotenv
 import pytesseract
 from PIL import Image
 
 from myapp.schemas.resume_extraction import ResumeExtractionInput
 
-pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)
+load_dotenv()
+# pytesseract.pytesseract.tesseract_cmd = "tesseract"
 
 class DocumentService:
 
@@ -39,42 +40,54 @@ class DocumentService:
     def _extract_pdf(self, content: bytes) -> str:
         text = []
 
-        with fitz.open(stream=content, filetype="pdf") as document:
-            for page in document:
-                page_text = page.get_text()
+        try:
+            with pymupdf.open(stream=content, filetype="pdf") as document:
+                for page in document:
+                    page_text = page.get_text()
 
-                links = "\n".join(
-                    link["uri"]
-                    for link in page.get_links()
-                    if "uri" in link
-                )
+                    links = "\n".join(
+                        link["uri"]
+                        for link in page.get_links()
+                        if "uri" in link
+                    )
 
-                text.append(page_text + "\n" + links)
+                    text.append(page_text + "\n" + links)
 
-        return "\n".join(text).strip()
+            return "\n".join(text).strip()
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to process resume description: {str(e)}"
+            ) from e
+
 
     def _extract_pdf_ocr(self, content: bytes) -> str:
         text = []
 
-        with fitz.open(stream=content, filetype="pdf") as document:
-            for page in document:
+        try: 
+            with pymupdf.open(stream=content, filetype="pdf") as document:
+                for page in document:
 
-                # Render PDF page as an image
-                pixmap = page.get_pixmap(dpi=300)
+                    # Render PDF page as an image
+                    pixmap = page.get_pixmap(dpi=300)
 
-                # Convert pixmap to bytes
-                image_bytes = pixmap.tobytes("png")
+                    # Convert pixmap to bytes
+                    image_bytes = pixmap.tobytes("png")
 
-                # Convert bytes to PIL Image
-                image = Image.open(BytesIO(image_bytes))
+                    # Convert bytes to PIL Image
+                    image = Image.open(BytesIO(image_bytes))
 
-                # Run OCR
-                page_text = pytesseract.image_to_string(image)
+                    # Run OCR
+                    page_text = pytesseract.image_to_string(image)
 
-                if page_text.strip():
-                    text.append(page_text.strip())
+                    if page_text.strip():
+                        text.append(page_text.strip())
 
-        return "\n".join(text).strip()
+            return "\n".join(text).strip()
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to process resume description: {str(e)}"
+            ) from e
+
 
     def _extract_docx(self, content: bytes) -> ResumeExtractionInput:
         document = Document(BytesIO(content))

@@ -7,7 +7,7 @@ pymongo
 python-dotenv
 openai
 google-genai
-PyMuPDF
+PyMuPDF>=1.24.3
 python-docx
 pytesseract
 Pillow
