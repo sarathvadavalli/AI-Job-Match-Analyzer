@@ -13,11 +13,11 @@ class Experience(BaseModel):
 
 
 class JobResponse(BaseModel):
-    job_title: str
-    experience_years: Experience
-    required_skills: list[str]
-    preferred_skills: list[str]
-    soft_skills: list[str]
+    job_title: Optional[str]
+    experience_years: Optional[Experience]
+    required_skills: Optional[list[str]]
+    preferred_skills: Optional[list[str]]
+    soft_skills: Optional[list[str]]
     location: Optional[str]
 
     @classmethod
