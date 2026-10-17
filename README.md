@@ -33,6 +33,34 @@ The application extracts structured candidate data, compares it with a job descr
 - **Document parsing**: PyMuPDF, python-docx, optional Tesseract OCR
 - **LLM**: Google Gemini through `google-genai`
 
+## Architecture
+
+```text
+ Browser
+   │
+   ▼
+FastAPI Routes
+   │
+   ├──────────────► AuthService ─────────► MongoDB
+   │
+   ├──────────────► ProfileService ──────► MongoDB
+   │
+   └──────────────► MatchService
+                         │
+                         ├──► DocumentService (For JD)
+                         │       └── PDF / DOCX / TXT / OCR (tesseract)
+                         |
+                         ├──► Profile Data from MongoDB
+                         |
+                         ├──► Pydantic for Profile and Matching Schema
+                         |
+                         ├──► LLMClient
+                         │       └── Gemini
+                                  │
+                                  ▼
+                            Matching Result
+```
+
 ## Quick Start
 
 ### Prerequisites
@@ -50,6 +78,7 @@ cd JD_Extractor
 ```
 
 Create a virtual environment:
+
 ```bash
 python -m venv .venv
 ```
@@ -91,92 +120,20 @@ FastAPI documentation is available at:
 
 The sample match response is available in output.json.
 
-## Architecture
-
-```text
- Browser
-   │
-   ▼
-FastAPI Routes
-   │
-   ├──────────────► AuthService ─────────► MongoDB
-   │
-   ├──────────────► ProfileService ──────► MongoDB
-   │
-   └──────────────► MatchService
-                         │
-                         ├──► DocumentService (For JD)
-                         │       └── PDF / DOCX / TXT / OCR
-                         |
-                         ├──► Profile Data from MongoDB
-                         |
-                         ├──► Pydantic for Profile and Matching Schema
-                         |
-                         ├──► LLMClient
-                         │       └── Gemini
-                                  │
-                                  ▼
-                            Matching Result
-```
-
-## Project Structure
-
-```text
-JD_Extractor/
-├── myapp/
-│   ├── main.py
-│   ├── core/
-│   │   ├── config.py
-│   │   ├── db.py
-│   │   └── security.py
-│   ├── routes/
-│   │   ├── auth_routes.py
-│   │   ├── document_routes.py
-│   │   └── page_routes.py
-│   ├── schemas/
-│   │   ├── auth.py
-│   │   ├── job_extraction.py
-│   │   ├── job_match_result.py
-│   │   ├── job_response.py
-│   │   └── resume_extraction.py
-│   ├── services/
-│   │   ├── doc_service.py
-│   │   ├── job_service.py
-│   │   ├── match_service.py
-│   │   ├── resume_service.py
-│   │   └── llm/
-│   │       ├── client.py
-│   │       └── context.py
-│   └── templates/
-│       ├── analysis.html
-│       ├── dashboard.html
-│       ├── login.html
-│       ├── profile.html
-│       ├── profile_form.html
-│       ├── upload_jd.html
-│       └── upload_resume.html
-├── tests/
-├── requirements.txt
-├── run.py
-└── README.md
-```
-
-## Packaging
-
-- Use the Docker runtime to install the Tesseract system executable alongside the Python dependencies. The included `Dockerfile` installs Tesseract with English
-language data and starts Uvicorn on Render's PORT.
-
-- The container sets `TESSERACT_CMD=/usr/bin/tesseract`. Remove any existing render environment override that points to a local Windows installation
-
 ## Testing
 
 Run the automated test suite with:
 
-```bash
-python -m tests.test_extraction
-```
+`python -m tests.test_vercel`
 
-The extraction test workflow uses the cases in `tests/testcases.json` and writes results to `tests/results.json`.
+## Packaging and Deployment
+
+- `Dockerfile.vercel` installs Python dependencies, Tesseract, and English OCR data.
+- Vercel creates a docker image based on the instructions, stores in its container registry and creates a container from it when app needs to serve requests.
+- `vercel.json` routes all requests to that container using Vercel's Container Runtime. See the [container documentation](https://vercel.com/docs/functions/runtimes/container).
+- The container listens on `PORT`, defaulting to Vercel's container port 80, and sets
+  `TESSERACT_CMD=/usr/bin/tesseract`.
+- Locally, install Tesseract separately and put it on PATH or set TESSERACT_CMD.
 
 ## Improvements
 

@@ -1,10 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "fastapi",
-  "functions": {
-    "app.py": {
-      "maxDuration": 300,
-      "excludeFiles": "{tests/**,SampleDocs/**,**/__pycache__/**,.pytest_cache/**,.git/**,.env,.env.*,Dockerfile,.dockerignore,render.yaml,helper.py,run.py,output.json,README.md}"
+  "services": {
+    "web": {
+      "root": ".",
+      "entrypoint": "Dockerfile.vercel"
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": { "service": "web" } }
+  ]
 }

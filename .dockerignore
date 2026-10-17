@@ -7,10 +7,7 @@ env
 ENV
 **/__pycache__
 .pytest_cache
-SampleDocs
 tests
+SampleDocs
 output.json
 helper.py
-Dockerfile
-.dockerignore
-render.yaml

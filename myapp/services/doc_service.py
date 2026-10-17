@@ -1,13 +1,19 @@
 from io import BytesIO
+import os
 import pymupdf
+import pytesseract
+from PIL import Image
+from dotenv import load_dotenv
 from docx import Document
 from zipfile import ZipFile, BadZipFile
 
 from myapp.schemas.resume_extraction import ResumeExtractionInput
 import logging
-from myapp.services.llm.client import LLMClient
 
 logger = logging.getLogger()
+
+load_dotenv()
+pytesseract.pytesseract.tesseract_cmd = os.getenv("TESSERACT_CMD") or "tesseract"
 
 MAX_UPLOAD_BYTES = 4 * 1024 * 1024
 MAX_DOCUMENT_CHARS = 100_000
@@ -56,6 +62,7 @@ class DocumentService:
                 scanned_pages = [page.number for page in document if not page.get_text().strip()]
                 if len(scanned_pages) > MAX_OCR_PAGES:
                     raise ValueError("Upload a PDF with at most 5 scanned pages.")
+
                 for page in document:
                     page_text = page.get_text().strip()
                     if page.number in scanned_pages:
@@ -75,18 +82,20 @@ class DocumentService:
             raise ValueError("Unable to read this PDF. Upload a valid PDF file.") from exc
 
     def _extract_page_ocr(self, page) -> str:
-        """Render one bounded image; recognition runs remotely through OpenRouter."""
+        """Recognize one bounded grayscale page locally with Tesseract."""
         longest_side = max(page.rect.width, page.rect.height)
         if longest_side <= 0:
             raise ValueError("The PDF contains a page with invalid dimensions.")
         scale = min(150 / 72, 1600 / longest_side)
         pixmap = page.get_pixmap(matrix=pymupdf.Matrix(scale, scale), colorspace=pymupdf.csGRAY, alpha=False)
-        image_bytes = pixmap.tobytes("png")
-        del pixmap
         try:
-            return LLMClient().extract_image_text(image_bytes)
+            with Image.frombytes("L", (pixmap.width, pixmap.height), pixmap.samples) as image:
+                del pixmap
+                return pytesseract.image_to_string(image, lang="eng", timeout=30).strip()
+        except pytesseract.TesseractNotFoundError as e:
+            raise RuntimeError("Tesseract OCR is not installed or TESSERACT_CMD is invalid.") from e
         except Exception as e:
-            logger.exception("External OCR failed")
+            logger.exception("Tesseract OCR failed")
             raise RuntimeError("Scanned PDF recognition failed. Try again or upload a text-based PDF.") from e
 
 
